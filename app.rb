@@ -3,6 +3,8 @@ require 'sinatra'
 require 'FluidDb'
 require 'json'
 
+class Netword < Sinatra::Application
+
 before do
 end
 
@@ -72,3 +74,6 @@ get '/children/:parentid' do
 
   return rst.to_json
 end
+
+end
+
