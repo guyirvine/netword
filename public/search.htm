@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+
+text {
+  font: 10px sans-serif;
+}
+
+</style>
+</head>
+<body>
+
+<form data-bind="submit: run">
+  <input type='search' class='criteria' data-bind="value: criteria" />
+  <input type='submit' class='search' />
+</form>
+
+<ul data-bind="foreach: list">
+  <li><a data-bind="attr: { href: url }, text: label"></a></li>
+</ul>
+
+
+<script src="bower_components/jquery/jquery.min.js"></script>
+<script src="bower_components/underscore/underscore-min.js"></script>
+<script src="bower_components/knockout/dist/knockout.js"></script>
+
+
+<script>
+
+function Result( name, _url ) {
+  var self = this;
+
+  this.label = name;
+  this.url = _url;
+}
+
+function SearchViewModel() {
+  var self = this;
+
+  self.list = ko.observableArray();
+
+  self.run = function() {
+    $.getJSON( "/search/" + self.criteria(), function( _l ) {
+      self.list.removeAll();
+      _.each( _l, function( el ) {
+        var r = new Result( el.name, el.url );
+        console.log( "el: ", el, "r: ", r );
+        self.list.push( r );
+      });
+    });
+
+  }
+
+  self.criteria = ko.observable( "an" );
+}
+
+
+var fm = new SearchViewModel();
+
+ko.applyBindings( fm );
+
+</script>
+
+</body>
+</html>

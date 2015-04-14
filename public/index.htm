@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <link rel="apple-touch-icon" href="img/quote.jpeg" />
+      <link rel="apple-touch-startup-image" href="img/quote.jpeg" />
+      <meta name="mobile-web-app-capable" content="yes">
+      <link rel="touch-icon" href="img/quote.jpeg" />
+      <link rel="touch-startup-image" href="img/quote.jpeg" />
+
+      <!-- Bootstrap -->
+      <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+      <link href="bower_components/jquery-mobile//css/themes/default/jquery.mobile.css" rel="stylesheet">
+      <link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
+
+      <title>guyirvine.com</title>
+
+        <style>
+            </style>
+    </head>
+    <body>
+
+      <div class="screen" id="search">
+        <h1>Search</h1>
+        <form data-bind="submit: run">
+          <input type='search' class='criteria' data-bind="value: criteria" />
+          <input type='submit' class='search' />
+        </form>
+
+        <table>
+          <thead>
+          </thead>
+          <tbody data-bind="foreach: list">
+            <tr>
+              <td>
+                <a href="" data-bind="click: click, text: label"></a>
+                <span data-bind="css: { hide: url() == null }"> <a data-bind="attr: { href: url }" target="_blank"><img style="width: 18px" src="img/basic2-284_maximize_window_external_link-128.png"/></a></span>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+          </tfoot>
+        </table>
+
+      </div>
+
+      <div class="screen hide" id="show">
+
+            <h1 data-bind="with: current">
+              <a data-bind="click: click, text: name"></a>
+              <span data-bind="css: { hide: url() == null }"> <a data-bind="attr: { href: url }" target="_blank"><img style="width: 18px" src="img/basic2-284_maximize_window_external_link-128.png"/></a></span>
+            </h1>
+
+            <table>
+              <thead>
+              </thead>
+              <tbody data-bind="foreach: list">
+                <tr>
+                  <td>
+                    <a href="" data-bind="click: click, text: label"></a>
+                    <span data-bind="css: { hide: url() == null }"> <a data-bind="attr: { href: url }" target="_blank"><img style="width: 18px" src="img/basic2-284_maximize_window_external_link-128.png"/></a></span>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+              </tfoot>
+            </table>
+      </div>
+      <div class="footer">
+        <a href="http://twitter.com/#!/guyirvine" class="handle" title="www">@guyirvine</a>
+      </div>
+
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="bower_components/jquery/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+        <script src="bower_components/jquery-mobile/js/jquery.mobile.define.js"></script>
+        <script src="bower_components/jquery-mobile/js/jquery.mobile.js"></script>
+
+        <script src="bower_components/knockout/dist/knockout.js"></script>
+
+        <script src="bower_components/underscore/underscore-min.js"></script>
+
+
+
+        <script>
+        function Word(_id) {
+          var self = this;
+
+          this.id = _id;
+          this.name = ko.observable("");
+          this.label = ko.observable("");
+          this.url = ko.observable("");
+
+          self.click = function() {
+            shvm.run( self.id );
+            $( "#search" ).addClass( "hide" );
+            $( "#show" ).removeClass( "hide" );
+          }
+        }
+
+
+        function MainViewModel() {
+          var self = this;
+
+          self.wordList = [];
+          self.wordIdx = {};
+
+          self.getWord = function(id) {
+            if ( self.wordIdx[id] != undefined ) {
+              return self.wordIdx[id];
+            }
+
+            var word = new Word(id);
+            self.wordList.push(word);
+            self.wordIdx[id] = word;
+
+            $.getJSON( "/word/" + id, function( el ) {
+              var word = self.wordIdx[el.id];
+              word.name( el.name );
+              word.label( el.name );
+              word.url( el.url );
+            });
+
+            return word;
+          }
+        }
+
+        function ShowViewModel( mvm ) {
+          var self = this;
+
+          self.mvm = mvm;
+
+          self.list = ko.observableArray();
+
+          self.run = function(id) {
+            self.current( self.mvm.getWord( id ) );
+
+            $.getJSON( "/link/" + id, function( _l ) {
+              self.list.removeAll();
+              _.each( _l, function( el ) {
+                var w = self.mvm.getWord( el.id );
+                self.list.push( w );
+              });
+            });
+
+          }
+
+          self.current = ko.observable();
+        }
+
+
+        function SearchViewModel(mvm) {
+          var self = this;
+
+          self.mvm = mvm;
+
+          self.list = ko.observableArray();
+
+          self.run = function() {
+            $.getJSON( "/search/" + self.criteria(), function( _l ) {
+              self.list.removeAll();
+              _.each( _l, function( el ) {
+                var w = self.mvm.getWord( el.id );
+                self.list.push( w );
+              });
+            });
+
+          }
+
+          self.criteria = ko.observable( "an" );
+        }
+
+        function show( id ) {
+          $( ".screen" ).addClass( "hide" );
+          $( id ).removeClass( "hide" );
+        }
+
+        show( "#search" );
+
+
+        var mvm = new MainViewModel();
+
+        var shvm = new ShowViewModel(mvm);
+        ko.applyBindings( shvm, $("#show")[0] );
+        shvm.run( 3 );
+
+        var sevm = new SearchViewModel(mvm);
+        ko.applyBindings( sevm, $("#search")[0] );
+
+
+
+            $("body").on("swipe",function(){
+              console.log( "Swipe Body" );
+            });
+
+            $("#content").on("click",function(){
+              console.log( "Click" );
+            });
+
+            $("#pageone").on("swipeleft",function(){
+              console.log( "Content Swipe Left" );
+//              $.mobile.changePage("#pagetwo", {transition : "slide", reverse:true});
+              $.mobile.changePage("#pagetwo", {transition : "slide"});
+            });
+
+            $("#pagetwo").on("swiperight",function(){
+              console.log( "Content Swipe Right" );
+//              $.mobile.changePage("#pagetwo", {transition : "slide", reverse:true});
+              $.mobile.changePage("#pageone", {transition : "slide", reverse:true});
+            });
+
+            </script>
+
+    </body>
+</html>

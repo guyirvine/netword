@@ -1,0 +1,16 @@
+{
+  "name": "netword",
+  "version": "0.1",
+  "authors": [
+    "Guy Irvine <guyirvine@gmail.com>"
+  ],
+  "dependencies": {
+    "jquery": "1.10.2",
+    "knockout": "~3.3",
+    "d3": "~3.5",
+    "underscore": "~1.8.3",
+    "jquery-mobile": "1.4.5",
+    "bootstrap": "3.3.4"
+  },
+  "private": true
+}
