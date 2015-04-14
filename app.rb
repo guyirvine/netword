@@ -9,8 +9,7 @@ before do
 end
 
 get '/word/:id' do
-  p ENV['DB']
-  db = FluidDb::Db(ENV['DB'])
+  db = FluidDb::Db(ENV['DATABASE_URL'])
 
   c = params[:id]
   sql = 'SELECT w.id, w.name, w.url FROM word_tbl w WHERE w.id = ?'
@@ -22,7 +21,7 @@ get '/word/:id' do
 end
 
 get '/search/:criteria' do
-  db = FluidDb::Db(ENV['DB'])
+  db = FluidDb::Db(ENV['DATABASE_URL'])
 
   c = "%#{params[:criteria]}%".upcase
   sql = 'SELECT id, name, url FROM word_tbl WHERE UPPER(name) LIKE ?'
@@ -34,7 +33,7 @@ get '/search/:criteria' do
 end
 
 get '/link/:parentid' do
-  db = FluidDb::Db(ENV['DB'])
+  db = FluidDb::Db(ENV['DATABASE_URL'])
 
   c = params[:parentid].to_i
   sql = 'SELECT l1.word_1 AS id ' \
@@ -54,7 +53,7 @@ get '/link/:parentid' do
 end
 
 get '/children/:parentid' do
-  db = FluidDb::Db(ENV['DB'])
+  db = FluidDb::Db(ENV['DATABASE_URL'])
 
   c = params[:parentid].to_i
   sql = 'SELECT w1.name, w1.url ' \
