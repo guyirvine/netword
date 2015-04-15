@@ -26,7 +26,7 @@
     <body>
 
       <div class="screen" id="search">
-        <h1>Search</h1>
+	      <h1>Search <a data-bind="click: add"><img src="img/button_add-128.png" style="width: 16px;"/></a></h1>
         <form data-bind="submit: run">
           <input type='search' class='criteria' data-bind="value: criteria" />
           <input type='submit' class='search' />
@@ -50,7 +50,6 @@
       </div>
 
       <div class="screen hide" id="show">
-
             <h1 data-bind="with: current">
               <a data-bind="click: click, text: name"></a>
               <span data-bind="css: { hide: url() == null }"> <a data-bind="attr: { href: url }" target="_blank"><img style="width: 18px" src="img/basic2-284_maximize_window_external_link-128.png"/></a></span>
@@ -70,7 +69,19 @@
               <tfoot>
               </tfoot>
             </table>
-      </div>
+    </div>
+
+    <div class="screen hide" id="add">
+
+          <h1>Add</h1>
+          <form data-bind="submit: add">
+            <input type='text' class='add' data-bind="value: word" />
+            <input type='submit' class='new' />
+          </form>
+
+  </div>
+
+
       <div class="footer">
         <a href="http://twitter.com/#!/guyirvine" class="handle" title="www">@guyirvine</a>
       </div>
@@ -103,9 +114,8 @@
             shvm.run( self.id );
             $( "#search" ).addClass( "hide" );
             $( "#show" ).removeClass( "hide" );
-          }
+          };
         }
-
 
         function MainViewModel() {
           var self = this;
@@ -114,7 +124,7 @@
           self.wordIdx = {};
 
           self.getWord = function(id) {
-            if ( self.wordIdx[id] != undefined ) {
+            if ( self.wordIdx[id] !== undefined ) {
               return self.wordIdx[id];
             }
 
@@ -130,7 +140,7 @@
             });
 
             return word;
-          }
+          };
         }
 
         function ShowViewModel( mvm ) {
@@ -150,8 +160,7 @@
                 self.list.push( w );
               });
             });
-
-          }
+          };
 
           self.current = ko.observable();
         }
@@ -164,6 +173,11 @@
 
           self.list = ko.observableArray();
 
+          self.add = function() {
+            $( "#search" ).addClass( "hide" );
+            $( "#add" ).removeClass( "hide" );
+          };
+
           self.run = function() {
             $.getJSON( "/search/" + self.criteria(), function( _l ) {
               self.list.removeAll();
@@ -173,10 +187,36 @@
               });
             });
 
-          }
+          };
 
           self.criteria = ko.observable( "an" );
         }
+
+
+        function AddViewModel(mvm) {
+          var self = this;
+
+          self.mvm = mvm;
+
+          self.add = function() {
+            alert( "Here" );
+
+
+            if ( self.word().trim() === "" ) {
+              return false;
+            }
+
+            $.post( "/word", self.word(), function(id) {
+              shvm.run( id );
+              $( "#add" ).addClass( "hide" );
+              $( "#show" ).removeClass( "hide" );
+            });
+
+          };
+
+          self.word = ko.observable( "" );
+        }
+
 
         function show( id ) {
           $( ".screen" ).addClass( "hide" );
@@ -195,6 +235,8 @@
         var sevm = new SearchViewModel(mvm);
         ko.applyBindings( sevm, $("#search")[0] );
 
+        var addvm = new AddViewModel(mvm);
+        ko.applyBindings( addvm, $("#add")[0] );
 
 
             $("body").on("swipe",function(){
