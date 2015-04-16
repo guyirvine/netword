@@ -35,6 +35,22 @@ class Netword < Sinatra::Application
     return id
   end
 
+  post '/link' do
+    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+
+    request.body.rewind
+    data = JSON.parse request.body.read
+
+    sql = 'INSERT INTO link_tbl( word_1, word_2 ) VALUES ( ?, ? )'
+    db.execute(sql, [data['word_1'], data['word_2']])
+
+    id = db.queryForValue("SELECT CURRVAL( 'link_seq' )")
+
+    db.close
+
+    return id
+  end
+
   get '/search/:criteria' do
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
 
