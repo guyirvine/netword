@@ -1,12 +1,12 @@
 CACHE MANIFEST
 
-# Build 2015-04-19. 04
+# Build 2015-04-19. 05
 CACHE:
-public/css/*
-public/js/*
-public/img/*
-public/bower_components/*
-public/index.htm
+css/*
+js/*
+img/*
+bower_components/*
+index.htm
 
 NETWORK:
 http://*
