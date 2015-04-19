@@ -1,11 +1,23 @@
 CACHE MANIFEST
 
-# Build 2015-04-19. 05
+# Build 2015-04-19. 08
 CACHE:
-css/*
-js/*
-img/*
-bower_components/*
+img/button_add-128.png
+img/basic2-284_maximize_window_external_link-128.png
+css/main.css
+bower_components/jquery-mobile/css/themes/default/jquery.mobile.theme.css
+bower_components/jquery-mobile/css/structure/jquery.mobile.structure.css
+bower_components/jquery-mobile/css/structure/*
+bower_components/bootstrap/dist/css/bootstrap.min.css
+bower_components/jquery-mobile/css/themes/default/jquery.mobile.css
+bower_components/jquery/jquery.min.js
+bower_components/bootstrap/dist/js/bootstrap.min.js
+bower_components/jquery-mobile/js/jquery.mobile.define.js
+bower_components/jquery-mobile/js/jquery.mobile.js
+bower_components/knockout/dist/knockout.js
+bower_components/underscore/underscore-min.js
+bower_components/jquery-mobile/css/structure/jquery.mobile.transition.slidein.keyframes.css
+bower_components/jquery-mobile/css/themes/default/jquery.mobile.icons.css
 index.htm
 
 NETWORK:

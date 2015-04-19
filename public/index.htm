@@ -15,7 +15,7 @@
 
       <!-- Bootstrap -->
       <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-      <link href="bower_components/jquery-mobile//css/themes/default/jquery.mobile.css" rel="stylesheet">
+      <link href="bower_components/jquery-mobile/css/themes/default/jquery.mobile.css" rel="stylesheet">
       <link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
 
       <title>guyirvine.com</title>
@@ -141,9 +141,13 @@
 
           self.popstate = function( state ) {
             self.currentViewModel.hide();
-            if ( state === null || state.view == "search" ) {
+            if ( state === null ) {
               self.currentViewModel = self.sevm;
-              self.sevm.criteria( state.criteria );
+              self.sevm.criteria( "" );
+
+            } else if ( state.view == "search" ) {
+                self.currentViewModel = self.sevm;
+                self.sevm.criteria( state.criteria );
 
             } else if ( state.view == "show" ) {
               self.currentViewModel = self.shvm;
