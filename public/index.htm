@@ -35,13 +35,7 @@
         <table>
           <thead>
           </thead>
-          <tbody data-bind="foreach: list">
-            <tr>
-              <td>
-                <a href="" data-bind="click: click, text: label"></a>
-                <span data-bind="css: { hide: url() == null }"> <a data-bind="attr: { href: url }" target="_blank"><img style="width: 18px" src="img/basic2-284_maximize_window_external_link-128.png"/></a></span>
-              </td>
-            </tr>
+          <tbody>
           </tbody>
           <tfoot>
           </tfoot>
@@ -59,13 +53,7 @@
             <table>
               <thead>
               </thead>
-              <tbody data-bind="foreach: list">
-                <tr>
-                  <td>
-                    <a href="" data-bind="click: click, text: label"></a>
-                    <span data-bind="css: { hide: url() == null }"> <a data-bind="attr: { href: url }" target="_blank"><img style="width: 18px" src="img/basic2-284_maximize_window_external_link-128.png"/></a></span>
-                  </td>
-                </tr>
+              <tbody>
               </tbody>
               <tfoot>
               </tfoot>
@@ -223,17 +211,34 @@
 
           self.mvm = mvm;
 
-          self.list = ko.observableArray();
-
           self.run = function(id) {
             self.current( self.mvm.getWord( id ) );
 
-            $.getJSON( "/link/" + id, function( _l ) {
-              self.list.removeAll();
+            $.getJSON( "/children/" + id, function( _l ) {
+/*
+              <tr>
+                <td>
+                  <a href="" data-bind="click: click, text: label"></a>
+                  <span data-bind="css: { hide: url() == null }"> <a data-bind="attr: { href: url }" target="_blank"><img style="width: 18px" src="img/basic2-284_maximize_window_external_link-128.png"/></a></span>
+                </td>
+              </tr>
+*/
+
+              var content = "";
               _.each( _l, function( el ) {
-                var w = self.mvm.getWord( el.id );
-                self.list.push( w );
+                content = content + "<tr>" +
+                            "<td>" +
+                              "<a onclick='mvm.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>";
+                if ( el.url != null ) {
+                  content = content + '<span> <a href="' + el.url + '" target="_blank"><img style="width: 18px" src="img/basic2-284_maximize_window_external_link-128.png"/></a></span>';
+                }
+                content = content + "</td>" +
+                  "</tr>";
+
               });
+
+              $( "#show table tbody" ).html( content );
+
             });
           };
 
@@ -264,19 +269,35 @@
 
           self.mvm = mvm;
 
-          self.list = ko.observableArray();
-
           self.add = function() {
             self.mvm.displayAdd();
           };
 
           self.run = function() {
             $.getJSON( "/search/" + self.criteria(), function( _l ) {
-              self.list.removeAll();
-              _.each( _l, function( el ) {
-                var w = self.mvm.getWord( el.id );
-                self.list.push( w );
-              });
+              /*
+                            <tr>
+                              <td>
+                                <a href="" data-bind="click: click, text: label"></a>
+                                <span data-bind="css: { hide: url() == null }"> <a data-bind="attr: { href: url }" target="_blank"><img style="width: 18px" src="img/basic2-284_maximize_window_external_link-128.png"/></a></span>
+                              </td>
+                            </tr>
+              */
+
+                            var content = "";
+                            _.each( _l, function( el ) {
+                              content = content + "<tr>" +
+                                          "<td>" +
+                                            "<a onclick='mvm.displayShow( " + el.id + " );return false;' href=''>" + el.name + "</a>";
+                              if ( el.url != null ) {
+                                content = content + '<span> <a href="' + el.url + '" target="_blank"><img style="width: 18px" src="img/basic2-284_maximize_window_external_link-128.png"/></a></span>';
+                              }
+                              content = content + "</td>" +
+                                "</tr>";
+
+                            });
+
+                            $( "#search table tbody" ).html( content );
             });
 
           };
