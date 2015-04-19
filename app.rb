@@ -87,12 +87,12 @@ class Netword < Sinatra::Application
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
 
     c = params[:parentid].to_i
-    sql = 'SELECT w1.name, w1.url ' \
+    sql = 'SELECT w1.id, w1.name, w1.url ' \
           'FROM word_tbl w1 ' \
           '  INNER JOIN link_tbl l1 ON ( w1.id = l1.word_1 ) ' \
           'WHERE l1.word_2 = ? ' \
           'UNION ' \
-          'SELECT w2.name, w2.url ' \
+          'SELECT w2.id, w2.name, w2.url ' \
           'FROM word_tbl w2 ' \
           '  INNER JOIN link_tbl l2 ON ( w2.id = l2.word_2 ) ' \
           'WHERE l2.word_1 = ? ' \
