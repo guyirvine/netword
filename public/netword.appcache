@@ -1,15 +1,12 @@
 CACHE MANIFEST
 
-# Build 2015-03-16. 03
+# Build 2015-04-19. 04
 CACHE:
 public/css/*
 public/js/*
-public/fonts/*
 public/img/*
 public/bower_components/*
-public/jquery-mobile/*
 public/index.htm
-quote.jpeg
 
 NETWORK:
 http://*
