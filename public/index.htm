@@ -141,13 +141,13 @@
 
           self.popstate = function( state ) {
             self.currentViewModel.hide();
-            if ( state.view == "show" ) {
-              self.currentViewModel = self.shvm;
-              self.shvm.run( state.id );
-
-            } else if ( state.view == "search" ) {
+            if ( state === null || state.view == "search" ) {
               self.currentViewModel = self.sevm;
               self.sevm.criteria( state.criteria );
+
+            } else if ( state.view == "show" ) {
+              self.currentViewModel = self.shvm;
+              self.shvm.run( state.id );
 
             } else if ( state.view == "add" ) {
               self.currentViewModel = self.addvm;
