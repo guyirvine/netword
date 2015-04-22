@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# Build 2015-04-19. 08
+# Build 2015-04-19. 09
 CACHE:
 img/button_add-128.png
 img/basic2-284_maximize_window_external_link-128.png
@@ -18,8 +18,8 @@ bower_components/knockout/dist/knockout.js
 bower_components/underscore/underscore-min.js
 bower_components/jquery-mobile/css/structure/jquery.mobile.transition.slidein.keyframes.css
 bower_components/jquery-mobile/css/themes/default/jquery.mobile.icons.css
-index.htm
 
 NETWORK:
+index.htm
 http://*
 https://*

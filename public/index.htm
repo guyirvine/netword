@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" manifest="netword.appcache">
+<html lang="en">
     <head>
 
       <meta charset="utf-8">
@@ -21,17 +21,57 @@
       <title>guyirvine.com</title>
 
         <style>
+        header {
+          background-color: rgb(58,87,149);
+          padding: 0.7em;
+        }
+        header input {
+          padding: 0.3em;
+          padding-bottom: 0.1em;
+          width: 100%;
+          border: 1px solid black;
+        }
+
+        footer {
+          background-color: rgb(58,87,149);
+          padding: 0.5em;
+          position: fixed;
+          bottom: 0px;
+          width: 100%;
+        }
+        footer a {
+          color: white;
+        }
+
+        body {
+          margin-left: 0em;
+          margin-right: 0em;
+        }
+
+        div.screen {
+          margin-left: 1em;
+          margin-right: 1em;
+        }
+
             </style>
     </head>
     <body>
 
+      <header>
+        <form data-bind="submit: run">
+          <input placeholder='Search' type='search' class='criteria' data-bind="value: criteria, valueUpdate:'afterkeydown'" />
+        </form>
+      </header>
+
       <div data-bind="css: { hide: visible() == false }" class="screen" id="search">
+        <!--
 	      <h1>Search <a data-bind="click: add"><img src="img/button_add-128.png" style="width: 16px;"/></a></h1>
         <form data-bind="submit: run">
           <input type='search' class='criteria' data-bind="value: criteria" />
           <input type='submit' class='search' />
         </form>
-
+-->
+        <br />
         <table>
           <thead>
           </thead>
@@ -69,9 +109,9 @@
         </div>
 
 
-      <div class="footer">
+      <footer>
         <a href="http://twitter.com/#!/guyirvine" class="handle" title="www">@guyirvine</a>
-      </div>
+      </footer>
 
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -110,6 +150,9 @@
 
         function MainViewModel() {
           var self = this;
+
+          self.sbvm = new SearchBoxViewModel(self);
+          ko.applyBindings( self.sbvm, $("header")[0] );
 
           self.shvm = new ShowViewModel(self);
           ko.applyBindings( self.shvm, $("#show")[0] );
@@ -229,7 +272,7 @@
                 content = content + "<tr>" +
                             "<td>" +
                               "<a onclick='mvm.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>";
-                if ( el.url != null ) {
+                if ( el.url !== null ) {
                   content = content + '<span> <a href="' + el.url + '" target="_blank"><img style="width: 18px" src="img/basic2-284_maximize_window_external_link-128.png"/></a></span>';
                 }
                 content = content + "</td>" +
@@ -254,6 +297,39 @@
 
 
         }
+
+
+        function SearchBoxViewModel(mvm) {
+          var self = this;
+
+          self.mvm = mvm;
+
+          self.run = function() {
+            $.getJSON( "/search/" + self.criteria(), function( _l ) {
+                            var content = "";
+                            _.each( _l, function( el ) {
+                              content = content + "<tr>" +
+                                          "<td>" +
+                                            "<a onclick='mvm.displayShow( " + el.id + " );return false;' href=''>" + el.name + "</a>";
+                              if ( el.url !== null ) {
+                                content = content + '<span> <a href="' + el.url + '" target="_blank"><img style="width: 18px" src="img/basic2-284_maximize_window_external_link-128.png"/></a></span>';
+                              }
+                              content = content + "</td>" +
+                                "</tr>";
+
+                            });
+
+                            $( "#search table tbody" ).html( content );
+            });
+
+          };
+
+          self.criteria = ko.observable( "" );
+          self.criteria.subscribe( function(value) {
+            self.run();
+          });
+        }
+
 
 
         function SearchViewModel(mvm) {
@@ -289,7 +365,7 @@
                               content = content + "<tr>" +
                                           "<td>" +
                                             "<a onclick='mvm.displayShow( " + el.id + " );return false;' href=''>" + el.name + "</a>";
-                              if ( el.url != null ) {
+                              if ( el.url !== null ) {
                                 content = content + '<span> <a href="' + el.url + '" target="_blank"><img style="width: 18px" src="img/basic2-284_maximize_window_external_link-128.png"/></a></span>';
                               }
                               content = content + "</td>" +
@@ -369,7 +445,7 @@
 
         var mvm = new MainViewModel();
 
-
+/*
             $("body").on("swipe",function(){
               console.log( "Swipe Body" );
             });
@@ -389,7 +465,7 @@
 //              $.mobile.changePage("#pagetwo", {transition : "slide", reverse:true});
               $.mobile.changePage("#pageone", {transition : "slide", reverse:true});
             });
-
+*/
             </script>
 
     </body>
