@@ -63,14 +63,7 @@
         </form>
       </header>
 
-      <div data-bind="css: { hide: visible() == false }" class="screen" id="search">
-        <!--
-	      <h1>Search <a data-bind="click: add"><img src="img/button_add-128.png" style="width: 16px;"/></a></h1>
-        <form data-bind="submit: run">
-          <input type='search' class='criteria' data-bind="value: criteria" />
-          <input type='submit' class='search' />
-        </form>
--->
+      <div data-bind="css: { hide: visible() == false }" class="screen" id="result">
         <br />
         <table>
           <thead>
@@ -157,14 +150,14 @@
           self.shvm = new ShowViewModel(self);
           ko.applyBindings( self.shvm, $("#show")[0] );
 
-          self.sevm = new SearchViewModel(self);
-          ko.applyBindings( self.sevm, $("#search")[0] );
+          self.sevm = new ResultViewModel(self);
+          ko.applyBindings( self.sevm, $("#result")[0] );
 
           self.addvm = new AddViewModel(self);
           ko.applyBindings( self.addvm, $("#add")[0] );
 
           self.currentViewModel = self.sevm;
-          history.pushState( self.currentViewModel.getState(), self.currentViewModel.getState(), "#search" );
+          history.pushState( self.currentViewModel.getState(), self.currentViewModel.getState(), "#result" );
           self.sevm.show();
 
           self.wordList = [];
@@ -176,7 +169,7 @@
               self.currentViewModel = self.sevm;
               self.sevm.criteria( "" );
 
-            } else if ( state.view == "search" ) {
+            } else if ( state.view == "result" ) {
                 self.currentViewModel = self.sevm;
                 self.sevm.criteria( state.criteria );
 
@@ -201,12 +194,11 @@
             self.shvm.show();
           };
 
-          self.displaySearch = function( criteria ) {
+          self.displayResult = function() {
             self.currentViewModel.hide();
 
-            history.pushState( self.currentViewModel.getState(), "", "#search" );
+            history.pushState( self.currentViewModel.getState(), "", "#result" );
             self.currentViewModel = self.sevm;
-            self.sevm.criteria( criteria );
             self.sevm.show();
           };
 
@@ -319,20 +311,23 @@
 
                             });
 
-                            $( "#search table tbody" ).html( content );
+                            $( "#result table tbody" ).html( content );
             });
 
           };
 
           self.criteria = ko.observable( "" );
           self.criteria.subscribe( function(value) {
+            if ( self.mvm.sevm.visible() === false ) {
+              self.mvm.displayResult();
+            }
             self.run();
           });
         }
 
 
 
-        function SearchViewModel(mvm) {
+        function ResultViewModel(mvm) {
           var self = this;
 
           self.visible = ko.observable( false );
@@ -373,7 +368,7 @@
 
                             });
 
-                            $( "#search table tbody" ).html( content );
+                            $( "#result table tbody" ).html( content );
             });
 
           };
@@ -381,7 +376,7 @@
           self.criteria = ko.observable( "an" );
 
           self.getState = function() {
-            return { "criteria": self.criteria(), "view": "search" };
+            return { "criteria": self.criteria(), "view": "result" };
           };
         }
 
