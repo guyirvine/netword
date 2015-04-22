@@ -3,8 +3,9 @@ body {
 }
 
 table {
-  border: 2px solid grey;
+  border: 1px solid #ccc;
   width: 66%;
+  margin-bottom: 5em;
 }
 
 td {
