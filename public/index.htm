@@ -1,359 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+<head>
 
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-      <meta name="apple-mobile-web-app-capable" content="yes">
-      <link rel="apple-touch-icon" href="img/quote.jpeg" />
-      <link rel="apple-touch-startup-image" href="img/quote.jpeg" />
-      <meta name="mobile-web-app-capable" content="yes">
-      <link rel="touch-icon" href="img/quote.jpeg" />
-      <link rel="touch-startup-image" href="img/quote.jpeg" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="img/quote.jpeg" />
+  <link rel="apple-touch-startup-image" href="img/quote.jpeg" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="touch-icon" href="img/quote.jpeg" />
+  <link rel="touch-startup-image" href="img/quote.jpeg" />
 
-      <!-- Bootstrap -->
-      <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-      <!--
-      <link href="bower_components/jquery-mobile/css/themes/default/jquery.mobile.css" rel="stylesheet">
-    -->
-      <link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
-
-      <title>guyirvine.com</title>
-
-        <style>
-        header {
-          background-color: rgb(58,87,149);
-          padding: 0.7em;
-        }
-        header input {
-          padding: 0.3em;
-          padding-bottom: 0.1em;
-          width: 100%;
-          border: 1px solid black;
-        }
-
-        footer {
-          background-color: rgb(58,87,149);
-          padding: 0.5em;
-          position: fixed;
-          bottom: 0px;
-          width: 100%;
-        }
-        footer a {
-          color: white;
-        }
-
-        body {
-          margin-left: 0em;
-          margin-right: 0em;
-        }
-
-        div.screen {
-          margin-left: 0em;
-          margin-right: 0em;
-        }
-
-        div.screen h1 {
-          margin-left: 1em;
-          margin-right: 1em;
-        }
-
-        div.screen div.table {
-          border-top: 1px solid #ccc;
-          border-bottom: 1px solid #ccc;
-          padding-left: 1em;
-          padding-right: 1em;
-          background-color: #f8f8f8;
-        }
-
-        table {
-          background-color: #f8f8f8;
-            border: none;
-            width: 100%;
-            margin-bottom: 0em;
-        }
-
-        h1 {
-          font-weight: normal;
-          font-size: 1.7em;
-          margin-bottom: 0;
-          color: #999;
-        }
-            </style>
-    </head>
-    <body>
-
-      <header>
-        <form onsubmit='viewModel.search();return false;'>
-          <input autofocus placeholder='Search' type='search' class='criteria' id='criteria' onkeyup="viewModel.search()" />
-        </form>
-      </header>
-
-      <div class="screen" id="result">
-        <br />
-        <table>
-          <thead>
-          </thead>
-          <tbody>
-          </tbody>
-          <tfoot>
-          </tfoot>
-        </table>
-      </div>
-
-      <div class="screen hide" id="show">
-        <h1></h1>
-        <div class="table">
-          <table>
-            <thead>
-            </thead>
-            <tbody>
-            </tbody>
-            <tfoot>
-            </tfoot>
-          </table>
-        </div>
-      </div>
-
-      <div class="screen hide" id="add">
-        <h1 data-bind="text: title">Add</h1>
-        <form data-bind="submit: add">
-          <input type='text' class='add' data-bind="value: word" />
-          <input type='submit' class='new' />
-        </form>
-      </div>
-
-
-      <footer>
-        <a href="http://twitter.com/#!/guyirvine" class="handle" title="www">@guyirvine</a>
-      </footer>
-
-
-        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-        <script src="bower_components/jquery/jquery.min.js"></script>
-        <!-- Include all compiled plugins (below), or include individual files as needed -->
-        <!--
-        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-
-        <script src="bower_components/jquery-mobile/js/jquery.mobile.define.js"></script>
-        <script src="bower_components/jquery-mobile/js/jquery.mobile.js"></script>
+  <!-- Bootstrap -->
+  <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!--
+  <link href="bower_components/jquery-mobile/css/themes/default/jquery.mobile.css" rel="stylesheet">
 -->
-        <script src="bower_components/knockout/dist/knockout.js"></script>
+<link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
 
-        <script src="bower_components/underscore/underscore-min.js"></script>
+<title>guyirvine.com</title>
+
+<style>
+header {
+  background-color: rgb(58,87,149);
+  padding: 0.7em;
+}
+header input {
+  padding: 0.3em;
+  padding-bottom: 0.1em;
+  width: 90%;
+  border: 1px solid black;
+}
+
+footer {
+  background-color: rgb(58,87,149);
+  padding: 0.5em;
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+}
+footer a {
+  color: white;
+}
+
+body {
+  margin-left: 0em;
+  margin-right: 0em;
+}
+
+div.screen {
+  margin-left: 0em;
+  margin-right: 0em;
+}
+
+div.screen h1 {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+div.screen div.table {
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  padding-left: 1em;
+  padding-right: 1em;
+  background-color: #f8f8f8;
+}
+
+table {
+  background-color: #f8f8f8;
+  border: none;
+  width: 100%;
+  margin-bottom: 0em;
+}
+
+h1 {
+  font-weight: normal;
+  font-size: 1.7em;
+  margin-bottom: 0;
+  color: #999;
+}
+</style>
+</head>
+<body>
+
+  <header>
+    <form onsubmit='viewModel.search();return false;'>
+      <input autofocus placeholder='Search' type='search' class='criteria' id='criteria' onkeyup="viewModel.search()" />
+      <a href="" onclick="viewModel.displayAdd();return false;"><img src="img/button_add-128.png" style="width: 16px;"/></a>
+    </form>
+  </header>
+
+  <div class="screen" id="result">
+    <br />
+    <table>
+      <thead>
+      </thead>
+      <tbody>
+      </tbody>
+      <tfoot>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="screen hide" id="show">
+    <h1></h1>
+    <div class="table">
+      <table>
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div class="screen hide" id="add">
+    <h1>Add a new Word</h1>
+    <form onsubmit="viewModel.add();return false">
+      <input type='text' class='add word' id="newword" />
+      <input type='submit' class='new' />
+    </form>
+  </div>
+
+
+  <footer>
+    <a href="http://twitter.com/#!/guyirvine" class="handle" title="www">@guyirvine</a>
+  </footer>
+
+
+  <script src="bower_components/jquery/jquery.min.js"></script>
+  <script src="bower_components/knockout/dist/knockout.js"></script>
+
+  <script src="bower_components/underscore/underscore-min.js"></script>
 
 
 
-        <script>
-        window.onpopstate = function(event) {
-          viewModel.popstate( event.state );
-        };
-
-        function MainViewModel() {
-          var self = this;
-
-          self.searchBox = new SearchBoxViewModel();
-          self.shvm = new ShowViewModel();
-          self.sevm = new ResultViewModel();
-          self.addvm = new AddViewModel();
-          history.pushState( {"view": "result"}, "", "#result" );
-
-          self.search = function() {
-            self.searchBox.run();
-          };
-
-          self.popstate = function( state ) {
-            $( ".screen" ).addClass( "hide" );
-
-            switch ( state.view ) {
-              case "result":
-                $( "#result" ).removeClass( "hide" );
-                break;
-              case "show":
-                self.shvm.run( state.id );
-                $( "#show" ).removeClass( "hide" );
-                break;
-              case "add":
-                self.addvm.word( state.word );
-                $( "#add" ).removeClass( "hide" );
-                break;
-              default:
-                $( "#result" ).removeClass( "hide" );
-            }
-          };
-
-          self.displayShow = function( id ) {
-            $( ".screen" ).addClass( "hide" );
-            self.shvm.run( id );
-            history.pushState( { "id": id, "view": "show" }, 'Show', "#show" );
-            $( "#show" ).removeClass( "hide" );
-          };
-
-          self.displayResult = function() {
-            $( ".screen" ).addClass( "hide" );
-            history.pushState( {"view": "result"}, "", "#result" );
-            $( "#result" ).removeClass( "hide" );
-          };
-
-          self.displayAdd = function(_id) {
-            $( ".screen" ).addClass( "hide" );
-            history.pushState( {"view": "add"}, "", "#add" );
-            self.addvm.setId(_id);
-            self.addvm.show();
-          };
-
-        }
-
-//*******************************************************
-function SearchBoxViewModel() {
-  var self = this;
-
-  self.criteria = document.getElementById( "criteria" );
-
-  self.running = false;
-
-  self.run = function() {
-    if ( self.running === true ) { return; }
-    self.running = true;
-    if ( $( "#result").hasClass( "hide" ) === true ) {
-      $( ".screen" ).addClass( "hide" );
-      $( "#result" ).removeClass( "hide" );
-    }
-    self._run();
-    self.running = false;
+  <script>
+  window.onpopstate = function(event) {
+    viewModel.popstate( event.state );
   };
 
-  self._run = function() {
-    if ( self.criteria.value === "" ) { $( "#result table tbody" ).html( "" ); return; }
+  function MainViewModel() {
+    var self = this;
 
-    var criteria = self.criteria.value;
-    $.getJSON( "/search/" + criteria, function( _l ) {
-      if ( criteria !== self.criteria.value ) {
-        self._run();
-      } else {
+    self.searchBox = new SearchBoxViewModel();
+    self.shvm = new ShowViewModel();
+    self.sevm = new ResultViewModel();
+    self.addvm = new AddViewModel();
+    history.pushState( {"view": "result"}, "", "#result" );
+
+    self.search = function() {
+      self.searchBox.run();
+    };
+
+    self.add = function() {
+      self.addvm.submit();
+    };
+
+    self.popstate = function( state ) {
+      $( ".screen" ).addClass( "hide" );
+
+      switch ( state.view ) {
+        case "result":
+        $( "#result" ).removeClass( "hide" );
+        break;
+        case "show":
+        self.shvm.run( state.id );
+        $( "#show" ).removeClass( "hide" );
+        break;
+        case "add":
+        self.addvm.word( state.word );
+        $( "#add" ).removeClass( "hide" );
+        break;
+        default:
+        $( "#result" ).removeClass( "hide" );
+      }
+    };
+
+    self.displayShow = function( id ) {
+      $( ".screen" ).addClass( "hide" );
+      self.shvm.run( id );
+      history.pushState( { "id": id, "view": "show" }, 'Show', "#show" );
+      $( "#show" ).removeClass( "hide" );
+    };
+
+    self.displayResult = function() {
+      $( ".screen" ).addClass( "hide" );
+      history.pushState( {"view": "result"}, "", "#result" );
+      $( "#result" ).removeClass( "hide" );
+    };
+
+    self.displayAdd = function(_id) {
+      $( ".screen" ).addClass( "hide" );
+      history.pushState( {"view": "add"}, "", "#add" );
+      $( "#add" ).removeClass( "hide" );
+    };
+
+  }
+
+  //*******************************************************
+  function SearchBoxViewModel() {
+    var self = this;
+
+    self.criteria = document.getElementById( "criteria" );
+
+    self.running = false;
+
+    self.run = function() {
+      if ( self.running === true ) { return; }
+      self.running = true;
+      if ( $( "#result").hasClass( "hide" ) === true ) {
+        $( ".screen" ).addClass( "hide" );
+        $( "#result" ).removeClass( "hide" );
+      }
+      self._run();
+      self.running = false;
+    };
+
+    self._run = function() {
+      if ( self.criteria.value === "" ) { $( "#result table tbody" ).html( "" ); return; }
+
+      var criteria = self.criteria.value;
+      $.getJSON( "/search/" + criteria, function( _l ) {
+        if ( criteria !== self.criteria.value ) {
+          self._run();
+        } else {
+          var content = "";
+          _.each( _l, function( el ) {
+            content = content + "<tr>" +
+            "<td>" +
+            "<a onclick='viewModel.displayShow( " + el.id + " );return false;' href=''>" + el.name + "</a>" +
+            "</td>" +
+            "</tr>";
+          });
+
+          $( "#result table tbody" ).html( content );
+        }
+
+      });
+
+    };
+
+  }
+
+
+  function ShowViewModel() {
+    var self = this;
+
+    self.id = null;
+
+    self.run = function(id) {
+      self.id = id;
+
+      $.getJSON( "/word/" + id, function( el ) {
+        $( "#show h1" ).html( el.name );
+      });
+
+      $.getJSON( "/children/" + id, function( _l ) {
+
         var content = "";
         _.each( _l, function( el ) {
           content = content + "<tr>" +
-                                  "<td>" +
-                                    "<a onclick='viewModel.displayShow( " + el.id + " );return false;' href=''>" + el.name + "</a>" +
-                                  "</td>" +
-                                "</tr>";
+          "<td>" +
+          "<a onclick='viewModel.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>" +
+          "</td>" +
+          "</tr>";
+
         });
 
-        $( "#result table tbody" ).html( content );
+        $( "#show table tbody" ).html( content );
+
+      });
+    };
+
+  }
+
+
+
+
+  function ResultViewModel() {
+    var self = this;
+
+  }
+
+
+  function AddViewModel() {
+    var self = this;
+
+    self.newword = document.getElementById( "criteria" );
+
+    self.submit = function() {
+      var word = newword.value.trim();
+      if ( word === "" ) {
+        return false;
       }
 
-    });
+      $.post( "/word", word, function(id) {
+//        if ( self.fromWord() === "" ) {
+          viewModel.displayShow( id );
+//        } else {
+//          $.post( "/link", JSON.stringify({ word_1: id, word_2: self.fromWord().id }), function() {
+//            self.viewModel.displayShow( self.fromWord().id );
+//          });
+//        }
+      });
+    };
 
+    self.word = ko.observable("");
+
+  }
+
+  window.onerror = function( d1 ) {
+    alert( d1 );
   };
 
-}
+  var viewModel = new MainViewModel();
+  //        document.getElementById( "criteria" ).value = 'an';
+  </script>
 
-
-        function ShowViewModel() {
-          var self = this;
-
-          self.id = null;
-
-          self.run = function(id) {
-            self.id = id;
-
-            $.getJSON( "/word/" + id, function( el ) {
-              $( "#show h1" ).html( el.name );
-            });
-
-            $.getJSON( "/children/" + id, function( _l ) {
-
-              var content = "";
-              _.each( _l, function( el ) {
-                content = content + "<tr>" +
-                                        "<td>" +
-                                          "<a onclick='viewModel.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>" +
-                                          "</td>" +
-                                      "</tr>";
-
-              });
-
-              $( "#show table tbody" ).html( content );
-
-            });
-          };
-
-          self.getState = function() {
-            return { "id": self.id, "view": "show" };
-          };
-
-
-        }
-
-
-
-
-        function ResultViewModel() {
-          var self = this;
-
-          self.getState = function() {
-            return { "view": "result" };
-          };
-
-        }
-
-
-        function AddViewModel() {
-          var self = this;
-
-          self.fromWord = ko.observable( "" );
-          self.title = ko.computed(function() {
-            var word = "Add2";
-            if( self.fromWord() !== "" ) {
-              word = word + "To: " + self.fromWord().name();
-            }
-
-            return word;
-          });
-
-          self.setId = function(id) {
-            self.word("");
-            if ( id === undefined ) {
-              self.fromWord( "" );
-            } else {
-              self.fromWord( self.viewModel.getWord( id ) );
-            }
-          };
-
-          self.add = function() {
-
-            if ( self.word().trim() === "" ) {
-              return false;
-            }
-
-            $.post( "/word", self.word(), function(id) {
-              if ( self.fromWord() === "" ) {
-                self.viewModel.displayShow( id );
-              } else {
-                $.post( "/link", JSON.stringify({ word_1: id, word_2: self.fromWord().id }), function() {
-                  self.viewModel.displayShow( self.fromWord().id );
-                });
-              }
-            });
-          };
-
-          self.word = ko.observable("");
-
-          self.getState = function() {
-            return { "word": self.word(), "view": "add" };
-          };
-        }
-
-        window.onerror = function( d1 ) {
-            alert( d1 );
-        };
-
-        var viewModel = new MainViewModel();
-//        document.getElementById( "criteria" ).value = 'an';
-      </script>
-
-    </body>
+</body>
 </html>
