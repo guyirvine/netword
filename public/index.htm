@@ -104,11 +104,26 @@ body.show footer .add-new-word {
   <header>
     <form onsubmit='viewModel.search();return false;'>
       <input autofocus placeholder='Search' type='search' class='criteria' id='criteria' onkeyup="viewModel.search()" />
-      <a href="" onclick="viewModel.displayAdd();return false;">new word</a>
+      <a class="extra" id="buttonnewword" href="" onclick="viewModel.displayAdd();return false;">new word</a>
+      <a class="extra" id="buttoncancel" href="" onclick="viewModel.displayTagged();return false;">cancel</a>
     </form>
   </header>
 
-  <div class="screen" id="result">
+  <div class="screen" id="tagged">
+    <br />
+    <div class="table">
+    <table>
+      <thead>
+      </thead>
+      <tbody>
+      </tbody>
+      <tfoot>
+      </tfoot>
+    </table>
+    </div>
+  </div>
+
+  <div class="screen hide" id="result">
     <br />
     <div class="table">
     <table>
@@ -173,11 +188,12 @@ body.show footer .add-new-word {
   function MainViewModel() {
     var self = this;
 
+    self.taggedViewModel = new TaggedViewModel();
     self.searchBox = new SearchBoxViewModel();
     self.shvm = new ShowViewModel();
     self.sevm = new ResultViewModel();
     self.addvm = new AddViewModel();
-    history.pushState( {"view": "result"}, "", "#result" );
+    history.pushState( {"view": "tagged"}, "", "#tagged" );
 
     self.search = function() {
       self.searchBox.run();
@@ -205,6 +221,10 @@ body.show footer .add-new-word {
         case "result":
         $( "#result" ).removeClass( "hide" );
         break;
+        case "tagged":
+        self.taggedViewModel.run();
+        $( "#tagged" ).removeClass( "hide" );
+        break;
         case "show":
         self.shvm.run( state.id );
         $( "#show" ).removeClass( "hide" );
@@ -217,6 +237,15 @@ body.show footer .add-new-word {
         default:
         $( "#result" ).removeClass( "hide" );
       }
+    };
+
+    self.displayTagged = function() {
+      $( ".screen" ).addClass( "hide" );
+      $( ".extra" ).addClass( "hide" );
+      self.taggedViewModel.run();
+      history.pushState( { "view": "tagged" }, 'Tagged', "#tagged" );
+      $( "#tagged" ).removeClass( "hide" );
+      $( "#buttonnewword" ).removeClass( "hide" );
     };
 
     self.displayShow = function( id ) {
@@ -233,6 +262,7 @@ body.show footer .add-new-word {
       $( ".extra" ).addClass( "hide" );
       history.pushState( {"view": "result"}, "", "#result" );
       $( "#result" ).removeClass( "hide" );
+      $( "#buttoncancel" ).removeClass( "hide" );
     };
 
     self.displayAdd = function(_id) {
@@ -242,7 +272,39 @@ body.show footer .add-new-word {
       $( "#add" ).removeClass( "hide" );
     };
 
+
+    self.displayTagged();
+
   }
+
+  function TaggedViewModel() {
+    var self = this;
+
+    self.run = function(id) {
+      self.id = id;
+
+      $.getJSON( "/tagged", function( _l ) {
+
+        var content = "";
+        if ( _l.length === 0 ) {
+          content = "<tr><td>No related words found</td></tr>";
+        } else {
+          _.each( _l, function( el ) {
+            content = content + "<tr>" +
+            "<td>" +
+              "<a onclick='viewModel.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>" +
+              "</td>" +
+              "</tr>";
+            });
+          }
+
+        $( "#tagged table tbody" ).html( content );
+
+      });
+    };
+
+  }
+
 
   //*******************************************************
   function SearchBoxViewModel() {
@@ -256,8 +318,7 @@ body.show footer .add-new-word {
       if ( self.running === true ) { return; }
       self.running = true;
       if ( $( "#result").hasClass( "hide" ) === true ) {
-        $( ".screen" ).addClass( "hide" );
-        $( "#result" ).removeClass( "hide" );
+        viewModel.displayResult();
       }
       self._run();
       self.running = false;
@@ -329,14 +390,9 @@ body.show footer .add-new-word {
 
   }
 
-
-
-
   function ResultViewModel() {
     var self = this;
-
   }
-
 
   function AddViewModel() {
     var self = this;

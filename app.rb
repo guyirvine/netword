@@ -104,4 +104,19 @@ class Netword < Sinatra::Application
 
     return rst.to_json
   end
+
+  get '/tagged' do
+    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+
+    sql = 'SELECT w.id, w.name, w.url ' \
+          'FROM word_tbl w ' \
+          'WHERE w.tagged = true ' \
+          ''
+
+    rst = db.queryForResultset(sql)
+
+    db.close
+
+    return rst.to_json
+  end
 end
