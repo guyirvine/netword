@@ -230,13 +230,18 @@ h1 {
           self._run();
         } else {
           var content = "";
-          _.each( _l, function( el ) {
-            content = content + "<tr>" +
-            "<td>" +
-            "<a onclick='viewModel.displayShow( " + el.id + " );return false;' href=''>" + el.name + "</a>" +
-            "</td>" +
-            "</tr>";
-          });
+
+          if ( _l.length === 0 ) {
+            content = "<tr><td>Search returned no results</td></tr>";
+          } else {
+            _.each( _l, function( el ) {
+              content = content + "<tr>" +
+              "<td>" +
+                "<a onclick='viewModel.displayShow( " + el.id + " );return false;' href=''>" + el.name + "</a>" +
+                "</td>" +
+                "</tr>";
+              });
+            }
 
           $( "#result table tbody" ).html( content );
         }
@@ -263,14 +268,17 @@ h1 {
       $.getJSON( "/children/" + id, function( _l ) {
 
         var content = "";
-        _.each( _l, function( el ) {
-          content = content + "<tr>" +
-          "<td>" +
-          "<a onclick='viewModel.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>" +
-          "</td>" +
-          "</tr>";
-
-        });
+        if ( _l.length === 0 ) {
+          content = "<tr><td>No related words found</td></tr>";
+        } else {
+          _.each( _l, function( el ) {
+            content = content + "<tr>" +
+            "<td>" +
+              "<a onclick='viewModel.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>" +
+              "</td>" +
+              "</tr>";
+            });
+          }
 
         $( "#show table tbody" ).html( content );
 
