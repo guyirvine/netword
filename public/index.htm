@@ -251,6 +251,12 @@ section.menu td {
       $( ".screen" ).addClass( "hide" );
       $( ".extra" ).addClass( "hide" );
 
+      if ( state === null || state.view === null ) {
+        self.taggedViewModel.run();
+        $( "#tagged" ).removeClass( "hide" );
+        return;
+      }
+
       switch ( state.view ) {
         case "result":
         $( "#result" ).removeClass( "hide" );
