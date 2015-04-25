@@ -30,8 +30,10 @@ header {
 header input {
   padding: 0.3em;
   padding-bottom: 0.1em;
-  width: 90%;
+  width: 85%;
   border: 1px solid black;
+  background-color: rgb(120, 141, 185);
+  color: white;
 }
 header form a {
   padding-left: 1em;
@@ -61,6 +63,7 @@ body {
 div.screen {
   margin-left: 0em;
   margin-right: 0em;
+  margin-top: 1em;
 }
 
 div.screen h1 {
@@ -97,6 +100,22 @@ body.show footer .add-new-word {
 .hide2 {
   display: none;
 }
+
+section.menu {
+}
+
+section.menu table {
+  width: 100%;
+}
+
+section.menu td {
+  padding: 6px 3px;
+  border: 1px solid #ccc;
+  border-top: none;
+  width: 33%;
+  text-align: center;
+}
+
 </style>
 </head>
 <body>
@@ -104,13 +123,29 @@ body.show footer .add-new-word {
   <header>
     <form onsubmit='viewModel.search();return false;'>
       <input autofocus placeholder='Search' type='search' class='criteria' id='criteria' onkeyup="viewModel.search()" />
-      <a class="extra" id="buttonnewword" href="" onclick="viewModel.displayAdd();return false;">new word</a>
       <a class="extra" id="buttoncancel" href="" onclick="viewModel.displayTagged();return false;">cancel</a>
     </form>
   </header>
 
+  <section class='menu'>
+    <table>
+      <thead>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <a class="" id="buttonnewword" href="" onclick="viewModel.displayAdd();return false;">new word</a>
+          </td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+      <tfoot>
+      </tfoot>
+    </table>
+  </section>
+
   <div class="screen" id="tagged">
-    <br />
     <div class="table">
     <table>
       <thead>
@@ -124,7 +159,6 @@ body.show footer .add-new-word {
   </div>
 
   <div class="screen hide" id="result">
-    <br />
     <div class="table">
     <table>
       <thead>
@@ -245,7 +279,6 @@ body.show footer .add-new-word {
       self.taggedViewModel.run();
       history.pushState( { "view": "tagged" }, 'Tagged', "#tagged" );
       $( "#tagged" ).removeClass( "hide" );
-      $( "#buttonnewword" ).removeClass( "hide" );
     };
 
     self.displayShow = function( id ) {

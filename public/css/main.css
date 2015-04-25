@@ -8,7 +8,7 @@ table {
   margin-bottom: 5em;
 }
 
-td {
+.screen td {
   padding: 12px 9px;
   border-top: 1px solid #eee;
 }
