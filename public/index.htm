@@ -379,12 +379,17 @@ footer td {
     };
 
     self.displayAddWord = function() {
+      $( "#formloadwords" ).addClass( "hide" );
       $( "#formaddword" ).toggleClass( "hide" );
+      $( "#wordadd" ).focus();
     };
 
 
     self.displayLoadWords = function() {
+      $( "#formaddword" ).addClass( "hide" );
       $( "#formloadwords" ).toggleClass( "hide" );
+      $( "#textarealoadwords" ).focus();
+
     };
 
     self.displayTagged();
