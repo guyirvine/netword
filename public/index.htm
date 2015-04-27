@@ -122,7 +122,7 @@ section.menu td {
 
   <header>
     <form onsubmit='viewModel.search();return false;'>
-      <input autofocus placeholder='Search' type='search' class='criteria' id='criteria' onkeyup="viewModel.search()" />
+      <input placeholder='Search' type='search' class='criteria' id='criteria' onkeyup="viewModel.search()" />
       <a class="extra" id="buttoncancel" href="" onclick="viewModel.displayTagged();return false;">cancel</a>
     </form>
   </header>
@@ -136,7 +136,10 @@ section.menu td {
           <td>
             <a class="" id="buttonnewword" href="" onclick="viewModel.displayAdd();return false;">new word</a>
           </td>
-          <td></td>
+          <td>
+            <a class="extra" id="buttontag" href="" onclick="viewModel.tagCurrent();return false;">tag</a>
+            <a class="extra" id="buttonuntag" href="" onclick="viewModel.unTagCurrent();return false;">untag</a>
+          </td>
           <td></td>
         </tr>
       </tbody>
@@ -245,6 +248,18 @@ section.menu td {
     };
     self.refreshShow = function() {
       self.shvm.run( self.getShowId() );
+    };
+    self.tagCurrent = function() {
+      $.post( "/tag/" + self.getShowId(), "", function(id) {
+          $( "#buttontag" ).addClass( "hide" );
+          $( "#buttonuntag" ).removeClass( "hide" );
+        });
+    };
+    self.unTagCurrent = function() {
+      $.post( "/untag/" + self.getShowId(), "", function(id) {
+          $( "#buttonuntag" ).addClass( "hide" );
+          $( "#buttontag" ).removeClass( "hide" );
+        });
     };
 
     self.popstate = function( state ) {
@@ -405,6 +420,12 @@ section.menu td {
 
       $.getJSON( "/word/" + id, function( el ) {
         $( "#show h1" ).html( el.name );
+        $( ".extra" ).addClass( "hide" );
+        if ( el.tagged == 't' ) {
+          $( "#buttonuntag" ).removeClass( "hide" );
+        } else {
+          $( "#buttontag" ).removeClass( "hide" );
+        }
       });
 
       $.getJSON( "/children/" + id, function( _l ) {

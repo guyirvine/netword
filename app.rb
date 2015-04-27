@@ -11,12 +11,24 @@ class Netword < Sinatra::Application
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
 
     c = params[:id]
-    sql = 'SELECT w.id, w.name, w.url FROM word_tbl w WHERE w.id = ?'
+    sql = 'SELECT w.id, w.name, w.url, w.tagged FROM word_tbl w WHERE w.id = ?'
     arr = db.queryForArray(sql, [c])
 
     db.close
 
     return arr.to_json
+  end
+
+  post '/tag/:id' do
+    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db.execute('UPDATE word_tbl SET tagged = true WHERE id = ?', [ params[:id] ] )
+    db.close
+  end
+
+  post '/untag/:id' do
+    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db.execute('UPDATE word_tbl SET tagged = false WHERE id = ?', [ params[:id] ] )
+    db.close
   end
 
   post '/word' do
