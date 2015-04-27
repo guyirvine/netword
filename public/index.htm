@@ -112,7 +112,7 @@ section.menu td {
   padding: 6px 3px;
   border: 1px solid #ccc;
   border-top: none;
-  width: 33%;
+  width: 25%;
   text-align: center;
 }
 
@@ -133,6 +133,9 @@ section.menu td {
       </thead>
       <tbody>
         <tr>
+          <td>
+            <a class="" id="buttontagged" href="" onclick="viewModel.displayTagged();return false;">home</a>
+          </td>
           <td>
             <a class="" id="buttonnewword" href="" onclick="viewModel.displayAdd();return false;">new word</a>
           </td>
@@ -293,7 +296,7 @@ section.menu td {
         $( "#addnewword" ).removeClass( "hide" );
         break;
         case "add":
-        self.addvm.word( state.word );
+        self.addvm.word( "" );
         $( "#add" ).removeClass( "hide" );
         break;
         default:
