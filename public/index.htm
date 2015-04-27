@@ -140,7 +140,9 @@ section.menu td {
             <a class="extra" id="buttontag" href="" onclick="viewModel.tagCurrent();return false;">tag</a>
             <a class="extra" id="buttonuntag" href="" onclick="viewModel.unTagCurrent();return false;">untag</a>
           </td>
-          <td></td>
+          <td>
+            <a class="extra hide" id="buttondelete" href="" onclick="viewModel.delete();return false;">delete</a>
+          </td>
         </tr>
       </tbody>
       <tfoot>
@@ -261,6 +263,11 @@ section.menu td {
           $( "#buttontag" ).removeClass( "hide" );
         });
     };
+    self.delete = function() {
+      $.post( "/delete/" + self.getShowId(), "", function(id) {
+        window.history.back();
+      });
+    };
 
     self.popstate = function( state ) {
       $( ".screen" ).addClass( "hide" );
@@ -309,6 +316,7 @@ section.menu td {
       history.pushState( { "id": id, "view": "show" }, 'Show', "#show" );
       $( "#show" ).removeClass( "hide" );
       $( "#addnewword" ).removeClass( "hide" );
+      $( "#buttondelete" ).removeClass( "hide" );
     };
 
     self.displayResult = function() {
@@ -420,10 +428,11 @@ section.menu td {
 
       $.getJSON( "/word/" + id, function( el ) {
         $( "#show h1" ).html( el.name );
-        $( ".extra" ).addClass( "hide" );
         if ( el.tagged == 't' ) {
+          $( "#buttontag" ).addClass( "hide" );
           $( "#buttonuntag" ).removeClass( "hide" );
         } else {
+          $( "#buttonuntag" ).addClass( "hide" );
           $( "#buttontag" ).removeClass( "hide" );
         }
       });

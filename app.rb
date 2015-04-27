@@ -19,15 +19,23 @@ class Netword < Sinatra::Application
     return arr.to_json
   end
 
+  post '/delete/:id' do
+    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db.execute('DELETE FROM link_tbl WHERE word_1 = ?', [params[:id]])
+    db.execute('DELETE FROM link_tbl WHERE word_2 = ?', [params[:id]])
+    db.execute('DELETE FROM word_tbl WHERE id = ?', [params[:id]])
+    db.close
+  end
+
   post '/tag/:id' do
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
-    db.execute('UPDATE word_tbl SET tagged = true WHERE id = ?', [ params[:id] ] )
+    db.execute('UPDATE word_tbl SET tagged = true WHERE id = ?', [params[:id]])
     db.close
   end
 
   post '/untag/:id' do
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
-    db.execute('UPDATE word_tbl SET tagged = false WHERE id = ?', [ params[:id] ] )
+    db.execute('UPDATE word_tbl SET tagged = false WHERE id = ?', [params[:id]])
     db.close
   end
 
