@@ -79,7 +79,7 @@ div.screen div.table {
   background-color: #f8f8f8;
 }
 
-table {
+section.menu table {
   background-color: #f8f8f8;
   border: none;
   width: 100%;
@@ -113,6 +113,18 @@ section.menu td {
   border: 1px solid #ccc;
   border-top: none;
   width: 25%;
+  text-align: center;
+}
+
+footer table {
+  width: 100%;
+}
+
+footer td {
+  padding: 6px 3px;
+  border: none;
+  border-left: 1px solid #ccc;
+  width: 33%;
   text-align: center;
 }
 
@@ -203,14 +215,38 @@ section.menu td {
 
 
   <footer>
-    <div class="extra hide" id="addnewword">
+    <div class="extra hide" id="formaddword">
       <form onsubmit="viewModel.addWord();return false">
         <input type='text' class='add word' id="wordadd" />
         <input type='submit' class='new' />
       </form>
     </div>
+    <div class="extra hide" id="formloadwords">
+      <form onsubmit="viewModel.loadWords();return false">
+        <textarea class='add word' id="textarealoadwords"></textarea>
+        <input type='submit' class='new' />
+      </form>
+    </div>
+
     <div>
-    <a href="http://twitter.com/#!/guyirvine" class="handle" title="www">@guyirvine</a>
+
+      <table>
+        <thead>
+        </thead>
+        <tbody>
+          <td style="border-left: none;">
+            <a href="http://twitter.com/#!/guyirvine" class="handle" title="www">@guyirvine</a>
+          </td>
+          <td>
+            <a href="" onclick="viewModel.displayAddWord();return false;" class="handle extra" id="buttonaddword">add word</a>
+          </td>
+          <td>
+            <a href="" onclick="viewModel.displayLoadWords();return false;" class="handle extra" id="buttonloadwords">load words</a>
+          </td>
+        </tbody>
+        <tfoot>
+        </tfoot>
+      </table>
   </div>
   </footer>
 
@@ -246,6 +282,9 @@ section.menu td {
     };
     self.addWord = function() {
       self.addvm.addWord();
+    };
+    self.loadWords = function() {
+      self.addvm.loadWords();
     };
 
     self.getShowId = function() {
@@ -293,7 +332,7 @@ section.menu td {
         case "show":
         self.shvm.run( state.id );
         $( "#show" ).removeClass( "hide" );
-        $( "#addnewword" ).removeClass( "hide" );
+//        $( "#addnewword" ).removeClass( "hide" );
         break;
         case "add":
         self.addvm.word( "" );
@@ -318,8 +357,10 @@ section.menu td {
       self.shvm.run( id );
       history.pushState( { "id": id, "view": "show" }, 'Show', "#show" );
       $( "#show" ).removeClass( "hide" );
-      $( "#addnewword" ).removeClass( "hide" );
       $( "#buttondelete" ).removeClass( "hide" );
+      $( "#buttonaddword" ).removeClass( "hide" );
+      $( "#buttonloadwords" ).removeClass( "hide" );
+
     };
 
     self.displayResult = function() {
@@ -337,6 +378,14 @@ section.menu td {
       $( "#add" ).removeClass( "hide" );
     };
 
+    self.displayAddWord = function() {
+      $( "#formaddword" ).toggleClass( "hide" );
+    };
+
+
+    self.displayLoadWords = function() {
+      $( "#formloadwords" ).toggleClass( "hide" );
+    };
 
     self.displayTagged();
 
@@ -493,6 +542,20 @@ section.menu td {
           viewModel.refreshShow();
           addword.value = "";
         });
+      });
+    };
+
+    self.loadWords = function() {
+      var textareawords = document.getElementById( "textarealoadwords" );
+      var words = textareawords.value.trim();
+      if ( words === "" ) {
+        return false;
+      }
+
+      console.log( words );
+      $.post( "/loadwords", JSON.stringify({ words: words, id: viewModel.getShowId() }), function() {
+        viewModel.refreshShow();
+        textareawords.value = "";
       });
     };
 

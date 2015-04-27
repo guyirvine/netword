@@ -139,4 +139,27 @@ class Netword < Sinatra::Application
 
     return rst.to_json
   end
+
+  post '/loadwords' do
+    request.body.rewind
+    data = JSON.parse request.body.read
+
+    p data
+
+    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    data['words'].split("\n").each do |word|
+      word.strip!
+      next if word == ''
+
+      sql = 'INSERT INTO word_tbl( name ) VALUES ( ? )'
+      db.execute(sql, [word])
+
+      sql = "INSERT INTO link_tbl( word_1, word_2 ) VALUES ( ?, CURRVAL( 'word_seq' ) )"
+      db.execute(sql, [data['id']])
+    end
+
+    p data
+
+    return "id"
+  end
 end
