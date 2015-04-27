@@ -543,6 +543,7 @@ footer td {
           addword.value = "";
         });
       });
+      $( "#formaddword" ).addClass( "hide" );
     };
 
     self.loadWords = function() {
@@ -557,6 +558,7 @@ footer td {
         viewModel.refreshShow();
         textareawords.value = "";
       });
+      $( "#formaddword" ).addClass( "hide" );
     };
 
   }
