@@ -7,11 +7,50 @@ class Netword < Sinatra::Application
   before do
   end
 
+  helpers do
+    def get_children(db, id)
+      sql = 'SELECT w1.id ' \
+            'FROM word_tbl w1 ' \
+            '  INNER JOIN link_tbl l1 ON ( w1.id = l1.word_1 ) ' \
+            'WHERE l1.word_2 = ? ' \
+            'UNION ' \
+            'SELECT w2.id ' \
+            'FROM word_tbl w2 ' \
+            '  INNER JOIN link_tbl l2 ON ( w2.id = l2.word_2 ) ' \
+            'WHERE l2.word_1 = ? ' \
+            ''
+
+      db.queryForResultset(sql, [id, id])
+    end
+
+    def get_word(db, id)
+      sql = 'SELECT w.id, w.name, w.url, w.tagged, w.showlevels ' \
+            'FROM word_tbl w ' \
+            'WHERE w.id = ? ' \
+            ''
+      db.queryForArray(sql, [id])
+    end
+
+    def get_descendents(db, depth, id, ids)
+      el = get_word(db, id)
+      el['depth'] = depth
+      el['children'] = []
+      get_children(db, id).each do |row|
+        child_id = row['id'].to_i
+        next if ids.include?(child_id)
+        ids.push child_id
+        child, ids = get_descendents(db, depth + 1, child_id, ids)
+        el['children'].push child
+      end
+      [el, ids]
+    end
+  end
+
   get '/word/:id' do
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
 
     c = params[:id]
-    sql = 'SELECT w.id, w.name, w.url, w.tagged FROM word_tbl w WHERE w.id = ?'
+    sql = 'SELECT w.id, w.name, w.url, w.tagged, w.showlevels FROM word_tbl w WHERE w.id = ?'
     arr = db.queryForArray(sql, [c])
 
     db.close
@@ -125,6 +164,14 @@ class Netword < Sinatra::Application
     return rst.to_json
   end
 
+  get '/descendants/:parentid' do
+    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    rst, _ = get_descendents(db, 0, params[:parentid].to_i, [params[:parentid].to_i])
+    db.close
+
+    return rst.to_json
+  end
+
   get '/tagged' do
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
 
@@ -158,7 +205,7 @@ class Netword < Sinatra::Application
 
     p data
 
-    return "id"
+    return 'id'
   end
 
   post '/updateword/:id' do

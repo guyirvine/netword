@@ -167,27 +167,27 @@ footer td {
 
   <div class="screen" id="tagged">
     <div class="table">
-    <table>
-      <thead>
-      </thead>
-      <tbody>
-      </tbody>
-      <tfoot>
-      </tfoot>
-    </table>
+      <table>
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+        </tfoot>
+      </table>
     </div>
   </div>
 
   <div class="screen hide" id="result">
     <div class="table">
-    <table>
-      <thead>
-      </thead>
-      <tbody>
-      </tbody>
-      <tfoot>
-      </tfoot>
-    </table>
+      <table>
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+        </tfoot>
+      </table>
     </div>
   </div>
 
@@ -247,7 +247,7 @@ footer td {
         <tfoot>
         </tfoot>
       </table>
-  </div>
+    </div>
   </footer>
 
 
@@ -301,15 +301,15 @@ footer td {
     };
     self.tagCurrent = function() {
       $.post( "/tag/" + self.getShowId(), "", function(id) {
-          $( "#buttontag" ).addClass( "hide" );
-          $( "#buttonuntag" ).removeClass( "hide" );
-        });
+        $( "#buttontag" ).addClass( "hide" );
+        $( "#buttonuntag" ).removeClass( "hide" );
+      });
     };
     self.unTagCurrent = function() {
       $.post( "/untag/" + self.getShowId(), "", function(id) {
-          $( "#buttonuntag" ).addClass( "hide" );
-          $( "#buttontag" ).removeClass( "hide" );
-        });
+        $( "#buttonuntag" ).addClass( "hide" );
+        $( "#buttontag" ).removeClass( "hide" );
+      });
     };
     self.delete = function() {
       $.post( "/delete/" + self.getShowId(), "", function(id) {
@@ -344,7 +344,7 @@ footer td {
         case "show":
         self.shvm.run( state.id );
         $( "#show" ).removeClass( "hide" );
-//        $( "#addnewword" ).removeClass( "hide" );
+        //        $( "#addnewword" ).removeClass( "hide" );
         break;
         case "add":
         self.addvm.word( "" );
@@ -423,11 +423,11 @@ footer td {
           _.each( _l, function( el ) {
             content = content + "<tr>" +
             "<td>" +
-              "<a onclick='viewModel.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>" +
-              "</td>" +
-              "</tr>";
-            });
-          }
+            "<a onclick='viewModel.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>" +
+            "</td>" +
+            "</tr>";
+          });
+        }
 
         $( "#tagged table tbody" ).html( content );
 
@@ -471,11 +471,11 @@ footer td {
             _.each( _l, function( el ) {
               content = content + "<tr>" +
               "<td>" +
-                "<a onclick='viewModel.displayShow( " + el.id + " );return false;' href=''>" + el.name + "</a>" +
-                "</td>" +
-                "</tr>";
-              });
-            }
+              "<a onclick='viewModel.displayShow( " + el.id + " );return false;' href=''>" + el.name + "</a>" +
+              "</td>" +
+              "</tr>";
+            });
+          }
 
           $( "#result table tbody" ).html( content );
         }
@@ -492,6 +492,22 @@ footer td {
 
     self.id = null;
 
+    self.generate_descendant_html = function(depth, _l) {
+      console.log( "generate_descendant_html. ", _l );
+      var content = "";
+      _.each( _l, function( el ) {
+        content = content + "<tr>" +
+        "<td>" +
+        "<a style='padding-left: " + depth * 2 + "em' onclick='viewModel.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>" +
+        "</td>" +
+        "</tr>";
+
+        content = content + self.generate_descendant_html( depth + 1, el['children'] );
+      });
+
+      return content;
+    }
+
     self.run = function(id) {
       self.id = id;
 
@@ -504,25 +520,44 @@ footer td {
           $( "#buttonuntag" ).addClass( "hide" );
           $( "#buttontag" ).removeClass( "hide" );
         }
-      });
 
-      $.getJSON( "/children/" + id, function( _l ) {
+        console.log( el );
 
-        var content = "";
-        if ( _l.length === 0 ) {
-          content = "<tr><td>No related words found</td></tr>";
+        if ( Number( el['showlevels'] ) > 1 ) {
+          $.getJSON( "/descendants/" + id, function( el ) {
+            console.log( "/descendants/", el );
+
+            var content = "";
+            if ( el['children'].length === 0 ) {
+              content = "<tr><td>No related words found</td></tr>";
+            } else {
+              content = content + self.generate_descendant_html( 0, el['children'] );
+            }
+
+            $( "#show table tbody" ).html( content );
+
+          });
+
         } else {
-          _.each( _l, function( el ) {
-            content = content + "<tr>" +
-            "<td>" +
+        $.getJSON( "/children/" + id, function( _l ) {
+
+          var content = "";
+          if ( _l.length === 0 ) {
+            content = "<tr><td>No related words found</td></tr>";
+          } else {
+            _.each( _l, function( el ) {
+              content = content + "<tr>" +
+              "<td>" +
               "<a onclick='viewModel.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>" +
               "</td>" +
               "</tr>";
             });
           }
 
-        $( "#show table tbody" ).html( content );
+          $( "#show table tbody" ).html( content );
 
+        });
+      }
       });
     };
 
@@ -543,7 +578,7 @@ footer td {
       }
 
       $.post( "/word", word, function(id) {
-          viewModel.displayShow( id );
+        viewModel.displayShow( id );
       });
     };
 
