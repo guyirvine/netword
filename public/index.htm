@@ -192,7 +192,7 @@ footer td {
   </div>
 
   <div class="screen hide" id="show">
-    <h1></h1>
+    <h1><a id="showwordname" href="" onblur="viewModel.changeWord();return false" contenteditable="true"></a></h1>
     <div class="table">
       <table>
         <thead>
@@ -257,11 +257,17 @@ footer td {
   <script src="bower_components/underscore/underscore-min.js"></script>
 
 
-
   <script>
   window.onpopstate = function(event) {
     viewModel.popstate( event.state );
   };
+
+  $('#showwordname').keydown(function(e) {
+    if(e.keyCode == 13) {
+      $('#showwordname').blur();
+      return false;
+    }
+  });
 
   function MainViewModel() {
     var self = this;
@@ -310,6 +316,12 @@ footer td {
         window.history.back();
       });
     };
+
+    self.changeWord = function() {
+      $.post( "/updateword/" + self.getShowId(), $( "#showwordname" )[0].text, function(id) {
+
+      });
+    }
 
     self.popstate = function( state ) {
       $( ".screen" ).addClass( "hide" );
@@ -484,7 +496,7 @@ footer td {
       self.id = id;
 
       $.getJSON( "/word/" + id, function( el ) {
-        $( "#show h1" ).html( el.name );
+        $( "#show h1 a" ).html( el.name );
         if ( el.tagged == 't' ) {
           $( "#buttontag" ).addClass( "hide" );
           $( "#buttonuntag" ).removeClass( "hide" );

@@ -144,8 +144,6 @@ class Netword < Sinatra::Application
     request.body.rewind
     data = JSON.parse request.body.read
 
-    p data
-
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
     data['words'].split("\n").each do |word|
       word.strip!
@@ -161,5 +159,14 @@ class Netword < Sinatra::Application
     p data
 
     return "id"
+  end
+
+  post '/updateword/:id' do
+    request.body.rewind
+    data = request.body.read
+
+    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db.execute 'UPDATE word_tbl SET name = ? WHERE id = ? ', [data, params[:id]]
+    db.close
   end
 end
