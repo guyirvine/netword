@@ -78,6 +78,19 @@ class Netword < Sinatra::Application
     db.close
   end
 
+  post '/singlelevel/:id' do
+    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db.execute('UPDATE word_tbl SET showlevels = 1 WHERE id = ?', [params[:id]])
+    db.close
+  end
+
+  post '/multilevel/:id' do
+    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db.execute('UPDATE word_tbl SET showlevels = 2 WHERE id = ?', [params[:id]])
+    db.close
+  end
+
+
   post '/word' do
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
 

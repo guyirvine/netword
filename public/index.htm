@@ -124,7 +124,7 @@ footer td {
   padding: 6px 3px;
   border: none;
   border-left: 1px solid #ccc;
-  width: 33%;
+  width: 25%;
   text-align: center;
 }
 
@@ -243,6 +243,10 @@ footer td {
           <td>
             <a href="" onclick="viewModel.displayLoadWords();return false;" class="handle extra" id="buttonloadwords">load words</a>
           </td>
+          <td>
+            <a href="" onclick="viewModel.singleLevelCurrent();return false;" class="handle extra" id="buttonsinglelevel">single level</a>
+            <a href="" onclick="viewModel.multiLevelCurrent();return false;" class="handle extra" id="buttonmultilevel">multi level</a>
+          </td>
         </tbody>
         <tfoot>
         </tfoot>
@@ -299,6 +303,18 @@ footer td {
     self.refreshShow = function() {
       self.shvm.run( self.getShowId() );
     };
+
+    self.singleLevelCurrent = function() {
+      $.post( "/singlelevel/" + self.getShowId(), "", function(id) {
+        self.refreshShow();
+      });
+    };
+    self.multiLevelCurrent = function() {
+      $.post( "/multilevel/" + self.getShowId(), "", function(id) {
+        self.refreshShow();
+      });
+    };
+
     self.tagCurrent = function() {
       $.post( "/tag/" + self.getShowId(), "", function(id) {
         $( "#buttontag" ).addClass( "hide" );
@@ -372,7 +388,6 @@ footer td {
       $( "#buttondelete" ).removeClass( "hide" );
       $( "#buttonaddword" ).removeClass( "hide" );
       $( "#buttonloadwords" ).removeClass( "hide" );
-
     };
 
     self.displayResult = function() {
@@ -493,7 +508,6 @@ footer td {
     self.id = null;
 
     self.generate_descendant_html = function(depth, _l) {
-      console.log( "generate_descendant_html. ", _l );
       var content = "";
       _.each( _l, function( el ) {
         content = content + "<tr>" +
@@ -520,13 +534,16 @@ footer td {
           $( "#buttonuntag" ).addClass( "hide" );
           $( "#buttontag" ).removeClass( "hide" );
         }
-
-        console.log( el );
+        if ( Number( el.showlevels ) > 1 ) {
+          $( "#buttonmultilevel" ).addClass( "hide" );
+          $( "#buttonsinglelevel" ).removeClass( "hide" );
+        } else {
+          $( "#buttonsinglelevel" ).addClass( "hide" );
+          $( "#buttonmultilevel" ).removeClass( "hide" );
+        }
 
         if ( Number( el['showlevels'] ) > 1 ) {
           $.getJSON( "/descendants/" + id, function( el ) {
-            console.log( "/descendants/", el );
-
             var content = "";
             if ( el['children'].length === 0 ) {
               content = "<tr><td>No related words found</td></tr>";
@@ -605,7 +622,6 @@ footer td {
         return false;
       }
 
-      console.log( words );
       $.post( "/loadwords", JSON.stringify({ words: words, id: viewModel.getShowId() }), function() {
         viewModel.refreshShow();
         textareawords.value = "";
