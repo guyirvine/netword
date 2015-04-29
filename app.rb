@@ -204,16 +204,22 @@ class Netword < Sinatra::Application
     request.body.rewind
     data = JSON.parse request.body.read
 
+    level_one_id = data['id'].to_i
+    level_two_id = nil
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
     data['words'].split("\n").each do |word|
-      word.strip!
-      next if word == ''
+      w = word.strip
+      next if w == ''
 
       sql = 'INSERT INTO word_tbl( name ) VALUES ( ? )'
-      db.execute(sql, [word])
+      db.execute(sql, [w])
 
-      sql = "INSERT INTO link_tbl( word_1, word_2 ) VALUES ( ?, CURRVAL( 'word_seq' ) )"
-      db.execute(sql, [data['id']])
+      id = db.queryForValue("SELECT CURRVAL( 'word_seq' )")
+      parent_id = ((word[0] == ' ' || word[0] == "\t") && !level_two_id.nil?) ? level_two_id : level_one_id
+      sql = 'INSERT INTO link_tbl( word_1, word_2 ) VALUES ( ?, ? )'
+      db.execute(sql, [parent_id, id])
+
+      level_two_id = id unless (word[0] == ' ' || word[0] == "\t")
     end
 
     p data
