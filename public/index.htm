@@ -128,8 +128,27 @@ footer td {
   padding: 6px 3px;
   border: none;
   border-left: 1px solid #ccc;
-  width: 25%;
+  width: 33%;
   text-align: center;
+}
+
+#bob {
+  background-color: rgb(58,87,149);
+  border: 1px solid white;
+  position: fixed;
+  width: 40%;
+  right: 0;
+  bottom: 3em;
+  padding: 1em;
+  color: white;
+}
+
+#bob ul {
+  padding-left: 1em;
+}
+
+#bob li {
+  list-style-type: none;
 }
 
 </style>
@@ -220,16 +239,30 @@ footer td {
 
   <footer>
     <div class="extra hide" id="formaddword">
+      <a href="" onclick="viewModel.displayLoadWords();return false;" class="handle">load words</a>
       <form onsubmit="viewModel.addWord();return false">
         <input type='text' class='add word' id="wordadd" />
         <input type='submit' class='new' />
       </form>
     </div>
     <div class="extra hide" id="formloadwords">
+      <a href="" onclick="viewModel.displayAddWord();return false;" class="handle">add word</a>
       <form onsubmit="viewModel.loadWords();return false">
         <textarea class='add word' id="textarealoadwords"></textarea>
         <input type='submit' class='new' />
       </form>
+    </div>
+
+
+    <div id="bob" class="hide" onblur="$( '#bob' ).addClass( 'hide' );">
+      <ul>
+        <li>
+          <a href="" onclick="viewModel.singleLevelCurrent();return false;" class="handle extra" id="buttonsinglelevel">single level</a>
+        </li>
+        <li>
+          <a href="" onclick="viewModel.multiLevelCurrent();return false;" class="handle extra" id="buttonmultilevel">multi level</a>
+        </li>
+      </ul>
     </div>
 
     <div>
@@ -245,11 +278,7 @@ footer td {
             <a href="" onclick="viewModel.displayAddWord();return false;" class="handle extra" id="buttonaddword">add word</a>
           </td>
           <td>
-            <a href="" onclick="viewModel.displayLoadWords();return false;" class="handle extra" id="buttonloadwords">load words</a>
-          </td>
-          <td>
-            <a href="" onclick="viewModel.singleLevelCurrent();return false;" class="handle extra" id="buttonsinglelevel">single level</a>
-            <a href="" onclick="viewModel.multiLevelCurrent();return false;" class="handle extra" id="buttonmultilevel">multi level</a>
+            <a href="" onclick="bob();return false;" class='extra' id='displayfootermenu'>...</a>
           </td>
         </tbody>
         <tfoot>
@@ -266,6 +295,11 @@ footer td {
 
 
   <script>
+
+  function bob() {
+    $( "#bob" ).toggleClass( "hide" );
+  }
+
   window.onpopstate = function(event) {
     viewModel.popstate( event.state );
   };
@@ -392,6 +426,7 @@ footer td {
       $( "#buttondelete" ).removeClass( "hide" );
       $( "#buttonaddword" ).removeClass( "hide" );
       $( "#buttonloadwords" ).removeClass( "hide" );
+      $( "#displayfootermenu" ).removeClass( "hide" );
     };
 
     self.displayResult = function() {
@@ -530,7 +565,15 @@ footer td {
       self.id = id;
 
       $.getJSON( "/word/" + id, function( el ) {
-        $( "#show h1 a" ).html( el.name );
+        console.log( el );
+
+        var content = '<a id="showwordname" href="" onblur="viewModel.changeWord();return false" contenteditable="true">' + el.name + "</a>";
+        if ( el.url != null ) {
+          content = content + " <a target='_blank' href='" + el.url + "'><img style='height: 1em' src='img/basic2-284_maximize_window_external_link-128.png' /></a>"
+        }
+
+//        $( "#show h1 a" ).html( content );
+        $( "#show h1" ).html( content );
         if ( el.tagged == 't' ) {
           $( "#buttontag" ).addClass( "hide" );
           $( "#buttonuntag" ).removeClass( "hide" );
