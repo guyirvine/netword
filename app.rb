@@ -9,7 +9,7 @@ class Netword < Sinatra::Application
 
   helpers do
     def insert_accesslog(db, key, word_id)
-      sql = 'INSERT INTO accesslog_tbl( key, word_id ) VALUES ( ?, ? )'
+      sql = "INSERT INTO accesslog_tbl( id, key, word_id, accessedat ) VALUES ( NEXTVAL( 'accesslog_seq' ), ?, ?, NOW() )"
       db.execute(sql, [key, word_id])
     end
 
