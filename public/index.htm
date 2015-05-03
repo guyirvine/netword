@@ -132,24 +132,56 @@ footer td {
   text-align: center;
 }
 
-#bob {
-  background-color: rgb(58,87,149);
-  border: 1px solid white;
+#popupmenu {
+  background-color: white;
+  border: 1px solid #ccc;
   position: fixed;
   width: 40%;
   right: 0;
   bottom: 3em;
   padding: 1em;
-  color: white;
+  color: #333;
 }
 
-#bob ul {
+#popupmenu ul {
   padding-left: 1em;
 }
 
-#bob li {
+#popupmenu li {
+  list-style-type: none;
+  padding: 12px 9px;
+  border-bottom: 1px solid #ccc;
+}
+
+#popupmenu ul a {
+  color: #333;
+  font-weight: bold;
+}
+#popupmenu ul a:hover {
+  color: #333;
+  text-decoration: underline;
+}
+
+
+#popdownmenu {
+  background-color: rgb(58,87,149);
+  border: 1px solid white;
+  position: fixed;
+  width: 40%;
+  right: 0;
+  top: 5em;
+  padding: 1em;
+  color: white;
+}
+
+#popdownmenu ul {
+  padding-left: 1em;
+}
+
+#popdownmenu li {
   list-style-type: none;
 }
+
 
 </style>
 </head>
@@ -175,17 +207,24 @@ footer td {
             <a class="" id="buttonnewword" href="" onclick="viewModel.displayAdd();return false;">new word</a>
           </td>
           <td>
-            <a class="extra" id="buttontag" href="" onclick="viewModel.tagCurrent();return false;">tag</a>
-            <a class="extra" id="buttonuntag" href="" onclick="viewModel.unTagCurrent();return false;">untag</a>
-          </td>
-          <td>
-            <a class="extra hide" id="buttondelete" href="" onclick="viewModel.delete();return false;">delete</a>
+            <a href="" onclick="popdownmenu();return false;" class='extra' id='displayheadermenu'>...</a>
           </td>
         </tr>
       </tbody>
       <tfoot>
       </tfoot>
     </table>
+
+    <div id="popdownmenu" class="hide" onblur="$( '#popdownmenu' ).addClass( 'hide' );">
+      <ul>
+        <li>
+        </li>
+        <li>
+          <a class="extra" id="buttondelete" href="" onclick="viewModel.delete();return false;">delete</a>
+        </li>
+      </ul>
+    </div>
+
   </section>
 
   <div class="screen" id="tagged">
@@ -238,6 +277,12 @@ footer td {
 
 
   <footer>
+    <div class="extra hide" id="formseturl">
+      <form onsubmit="viewModel.setUrl();return false">
+        <input type='text' class='' id="textseturl" />
+        <input type='submit' class='new' />
+      </form>
+    </div>
     <div class="extra hide" id="formaddword">
       <a href="" onclick="viewModel.displayLoadWords();return false;" class="handle">load words</a>
       <form onsubmit="viewModel.addWord();return false">
@@ -254,13 +299,21 @@ footer td {
     </div>
 
 
-    <div id="bob" class="hide" onblur="$( '#bob' ).addClass( 'hide' );">
+    <div id="popupmenu" class="hide" onblur="$( '#popupmenu' ).addClass( 'hide' );">
       <ul>
         <li>
-          <a href="" onclick="viewModel.singleLevelCurrent();return false;" class="handle extra" id="buttonsinglelevel">single level</a>
+          <a class="" id="buttonseturl" href="" onclick="viewModel.displaySetUrl();return false;">set url</a>
         </li>
         <li>
+          <a href="" onclick="viewModel.singleLevelCurrent();return false;" class="handle extra" id="buttonsinglelevel">single level</a>
           <a href="" onclick="viewModel.multiLevelCurrent();return false;" class="handle extra" id="buttonmultilevel">multi level</a>
+        </li>
+        <li>
+          <a class="extra" id="buttontag" href="" onclick="viewModel.tagCurrent();return false;">tag</a>
+          <a class="extra" id="buttonuntag" href="" onclick="viewModel.unTagCurrent();return false;">untag</a>
+        </li>
+        <li>
+          <a class="" id="buttondelete" href="" onclick="viewModel.delete();return false;">delete</a>
         </li>
       </ul>
     </div>
@@ -278,7 +331,7 @@ footer td {
             <a href="" onclick="viewModel.displayAddWord();return false;" class="handle extra" id="buttonaddword">add word</a>
           </td>
           <td>
-            <a href="" onclick="bob();return false;" class='extra' id='displayfootermenu'>...</a>
+            <a href="" onclick="popupmenu();return false;" class='extra' id='displayfootermenu'>...</a>
           </td>
         </tbody>
         <tfoot>
@@ -296,8 +349,13 @@ footer td {
 
   <script>
 
-  function bob() {
-    $( "#bob" ).toggleClass( "hide" );
+  function popupmenu() {
+    $( "#popupmenu" ).toggleClass( "hide" );
+    $( "#popupmenu" ).focus();
+  }
+
+  function popdownmenu() {
+    $( "#popdownmenu" ).toggleClass( "hide" );
   }
 
   window.onpopstate = function(event) {
@@ -334,6 +392,11 @@ footer td {
     self.loadWords = function() {
       self.addvm.loadWords();
     };
+    self.setUrl = function() {
+      $.post( "/seturl/" + self.getShowId(), $( "#textseturl" )[0].value, function(id) {
+        self.refreshShow();
+      });
+    }
 
     self.getShowId = function() {
       return self.shvm.id;
@@ -409,6 +472,14 @@ footer td {
       }
     };
 
+    self.displaySetUrl = function() {
+      $( "#formloadwords" ).addClass( "hide" );
+      $( "#formaddword" ).addClass( "hide" );
+      $( "#formseturl" ).removeClass( "hide" );
+      $( "#textseturl" ).focus();
+    };
+
+
     self.displayTagged = function() {
       $( ".screen" ).addClass( "hide" );
       $( ".extra" ).addClass( "hide" );
@@ -423,10 +494,11 @@ footer td {
       self.shvm.run( id );
       history.pushState( { "id": id, "view": "show" }, 'Show', "#show" );
       $( "#show" ).removeClass( "hide" );
-      $( "#buttondelete" ).removeClass( "hide" );
       $( "#buttonaddword" ).removeClass( "hide" );
       $( "#buttonloadwords" ).removeClass( "hide" );
       $( "#displayfootermenu" ).removeClass( "hide" );
+      $( "#displayheadermenu" ).removeClass( "hide" );
+
     };
 
     self.displayResult = function() {
