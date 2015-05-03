@@ -8,6 +8,17 @@ class Netword < Sinatra::Application
   end
 
   helpers do
+    def insert_accesslog(db, key, word_id)
+      sql = 'INSERT INTO accesslog_tbl( key, word_id ) VALUES ( ?, ? )'
+      db.execute(sql, [key, word_id])
+    end
+
+    def insert_accesslog_rst(db, key, rst)
+      rst.each do |row|
+        insert_accesslog(db, key, row['id'].to_i)
+      end
+    end
+
     def get_children(db, id)
       sql = 'SELECT w1.id ' \
             'FROM word_tbl w1 ' \
@@ -20,7 +31,9 @@ class Netword < Sinatra::Application
             'WHERE l2.word_1 = ? ' \
             ''
 
-      db.queryForResultset(sql, [id, id])
+      rst = db.queryForResultset(sql, [id, id])
+      insert_accesslog_rst(db, 'children', rst)
+      rst
     end
 
     def get_word(db, id)
@@ -28,7 +41,11 @@ class Netword < Sinatra::Application
             'FROM word_tbl w ' \
             'WHERE w.id = ? ' \
             ''
-      db.queryForArray(sql, [id])
+
+      row = db.queryForArray(sql, [id])
+      insert_accesslog(db, 'get_word', id)
+
+      row
     end
 
     def get_descendents(db, depth, id, ids)
@@ -49,9 +66,10 @@ class Netword < Sinatra::Application
   get '/word/:id' do
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
 
-    c = params[:id]
+    c = params[:id].to_i
     sql = 'SELECT w.id, w.name, w.url, w.tagged, w.showlevels FROM word_tbl w WHERE w.id = ?'
     arr = db.queryForArray(sql, [c])
+    insert_accesslog(db, 'word', c)
 
     db.close
 
@@ -89,7 +107,6 @@ class Netword < Sinatra::Application
     db.execute('UPDATE word_tbl SET showlevels = 2 WHERE id = ?', [params[:id]])
     db.close
   end
-
 
   post '/word' do
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
@@ -129,6 +146,7 @@ class Netword < Sinatra::Application
     c = "%#{params[:criteria]}%".upcase
     sql = 'SELECT id, name, url FROM word_tbl WHERE UPPER(name) LIKE ?'
     rst = db.queryForResultset(sql, [c])
+    insert_accesslog_rst(db, 'search', rst)
 
     db.close
 
@@ -149,6 +167,7 @@ class Netword < Sinatra::Application
           ''
 
     rst = db.queryForResultset(sql, [c, c])
+    insert_accesslog_rst(db, 'link', rst)
 
     db.close
 
@@ -171,6 +190,7 @@ class Netword < Sinatra::Application
           ''
 
     rst = db.queryForResultset(sql, [c, c])
+    insert_accesslog_rst(db, 'children', rst)
 
     db.close
 
@@ -194,6 +214,7 @@ class Netword < Sinatra::Application
           ''
 
     rst = db.queryForResultset(sql)
+    insert_accesslog_rst(db, 'tagged', rst)
 
     db.close
 
@@ -233,6 +254,17 @@ class Netword < Sinatra::Application
 
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
     db.execute 'UPDATE word_tbl SET name = ? WHERE id = ? ', [data, params[:id]]
+    db.close
+  end
+
+  post '/seturl/:id' do
+    request.body.rewind
+    data = request.body.read
+
+    p "seturl: #{data}"
+
+    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db.execute 'UPDATE word_tbl SET url = ? WHERE id = ? ', [data, params[:id]]
     db.close
   end
 end
