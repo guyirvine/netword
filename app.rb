@@ -1,9 +1,16 @@
 require 'sinatra'
+require 'sinatra/cross_origin'
+
 
 require 'FluidDb'
 require 'json'
 
 class Netword < Sinatra::Application
+  # To enable cross origin requests for all routes:
+  configure do
+    enable :cross_origin
+  end
+
   before do
   end
 
@@ -267,5 +274,25 @@ class Netword < Sinatra::Application
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
     db.execute 'UPDATE word_tbl SET url = ? WHERE id = ? ', [data, params[:id]]
     db.close
+  end
+
+  post '/addext' do
+    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+
+    request.body.rewind
+    data = JSON.parse request.body.read
+
+    sql = 'INSERT INTO word_tbl( name, url, tagged ) VALUES ( ?, ?, true )'
+    db.execute(sql, [data['word'], data['url']])
+
+    db.close
+  end
+
+  options '/addext' do
+    response.headers['Allow'] = 'POST,OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept'
+    response.headers['Access-Control-Allow-Origin'] = 'chrome-extension://mimggjmblkmdldpnkndbkcinbpfkhgaf'
+
+    200
   end
 end
