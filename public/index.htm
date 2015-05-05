@@ -182,6 +182,11 @@ footer td {
   list-style-type: none;
 }
 
+li.tick:before
+ {
+    content: '✔';
+    margin-left: -1.5em; margin-right: .500em;
+ }
 
 </style>
 </head>
@@ -281,6 +286,7 @@ footer td {
       <form onsubmit="viewModel.setUrl();return false">
         <input type='text' class='' id="textseturl" />
         <input type='submit' class='new' />
+        <a href="" onclick="viewModel.hideSetUrl();return false;">cancel</a>
       </form>
     </div>
     <div class="extra hide" id="formaddword">
@@ -299,21 +305,21 @@ footer td {
     </div>
 
 
-    <div id="popupmenu" class="hide" onblur="$( '#popupmenu' ).addClass( 'hide' );">
+    <div id="popupmenu" class="extra hide" onblur="$( '#popupmenu' ).addClass( 'hide' );">
       <ul>
         <li>
-          <a class="" id="buttonseturl" href="" onclick="viewModel.displaySetUrl();return false;">set url</a>
+          <a class="" id="buttonseturl" href="" onclick="viewModel.displaySetUrl();return false;">Set Url</a>
+        </li>
+        <li class="treeview">
+          <a href="" onclick="viewModel.singleLevelCurrent();return false;" class="handle extra" id="buttonsinglelevel">Tree View</a>
+          <a href="" onclick="viewModel.multiLevelCurrent();return false;" class="handle extra" id="buttonmultilevel">Tree View</a>
+        </li>
+        <li class="tagged">
+          <a class="extra" id="buttontag" href="" onclick="viewModel.tagCurrent();return false;">Tag</a>
+          <a class="extra" id="buttonuntag" href="" onclick="viewModel.unTagCurrent();return false;">Tag</a>
         </li>
         <li>
-          <a href="" onclick="viewModel.singleLevelCurrent();return false;" class="handle extra" id="buttonsinglelevel">single level</a>
-          <a href="" onclick="viewModel.multiLevelCurrent();return false;" class="handle extra" id="buttonmultilevel">multi level</a>
-        </li>
-        <li>
-          <a class="extra" id="buttontag" href="" onclick="viewModel.tagCurrent();return false;">tag</a>
-          <a class="extra" id="buttonuntag" href="" onclick="viewModel.unTagCurrent();return false;">untag</a>
-        </li>
-        <li>
-          <a class="" id="buttondelete" href="" onclick="viewModel.delete();return false;">delete</a>
+          <a class="" id="buttondelete" href="" onclick="viewModel.delete();return false;">Delete</a>
         </li>
       </ul>
     </div>
@@ -418,12 +424,14 @@ footer td {
 
     self.tagCurrent = function() {
       $.post( "/tag/" + self.getShowId(), "", function(id) {
+        $( "#popupmenu .tagged" ).addClass( "tick" );
         $( "#buttontag" ).addClass( "hide" );
         $( "#buttonuntag" ).removeClass( "hide" );
       });
     };
     self.unTagCurrent = function() {
       $.post( "/untag/" + self.getShowId(), "", function(id) {
+        $( "#popupmenu .tagged" ).removeClass( "tick" );
         $( "#buttonuntag" ).addClass( "hide" );
         $( "#buttontag" ).removeClass( "hide" );
       });
@@ -475,10 +483,14 @@ footer td {
     self.displaySetUrl = function() {
       $( "#formloadwords" ).addClass( "hide" );
       $( "#formaddword" ).addClass( "hide" );
+      $( "#popupmenu" ).addClass( "hide" );
       $( "#formseturl" ).removeClass( "hide" );
       $( "#textseturl" ).focus();
     };
 
+    self.hideSetUrl = function() {
+      $( "#formseturl" ).addClass( "hide" );
+    }
 
     self.displayTagged = function() {
       $( ".screen" ).addClass( "hide" );
@@ -605,11 +617,8 @@ footer td {
 
           $( "#result table tbody" ).html( content );
         }
-
       });
-
     };
-
   }
 
 
@@ -644,19 +653,25 @@ footer td {
           content = content + " <a target='_blank' href='" + el.url + "'><img style='height: 1em' src='img/basic2-284_maximize_window_external_link-128.png' /></a>"
         }
 
+        $( "#textseturl" )[0].value = el.url;
+
 //        $( "#show h1 a" ).html( content );
         $( "#show h1" ).html( content );
         if ( el.tagged == 't' ) {
+          $( "#popupmenu .tagged" ).addClass( "tick" );
           $( "#buttontag" ).addClass( "hide" );
           $( "#buttonuntag" ).removeClass( "hide" );
         } else {
+          $( "#popupmenu .tagged" ).removeClass( "tick" );
           $( "#buttonuntag" ).addClass( "hide" );
           $( "#buttontag" ).removeClass( "hide" );
         }
         if ( Number( el.showlevels ) > 1 ) {
+          $( ".treeview" ).addClass( "tick" );
           $( "#buttonmultilevel" ).addClass( "hide" );
           $( "#buttonsinglelevel" ).removeClass( "hide" );
         } else {
+          $( ".treeview" ).removeClass( "tick" );
           $( "#buttonsinglelevel" ).addClass( "hide" );
           $( "#buttonmultilevel" ).removeClass( "hide" );
         }
@@ -696,7 +711,6 @@ footer td {
       }
       });
     };
-
   }
 
   function ResultViewModel() {
