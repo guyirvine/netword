@@ -80,6 +80,7 @@ class Netword < Sinatra::Application
     db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
     db.execute('DELETE FROM link_tbl WHERE word_1 = ?', [params[:id]])
     db.execute('DELETE FROM link_tbl WHERE word_2 = ?', [params[:id]])
+    db.execute('DELETE FROM accesslog_tbl WHERE word_id = ?', [params[:id]])
     db.execute('DELETE FROM word_tbl WHERE id = ?', [params[:id]])
     db.close
   end
