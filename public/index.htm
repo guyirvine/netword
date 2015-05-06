@@ -261,6 +261,11 @@ li.tick:before
   <div class="screen hide" id="show">
     <h1><a id="showwordname" href="" onblur="viewModel.changeWord();return false" contenteditable="true"></a></h1>
     <div class="table">
+      <form id='formsearchadd' class='extra formsearchadd' onsubmit='viewModel.addWord();return false;'>
+        <input placeholder='Search' type='search' class='textsearchadd' id='textsearchadd' onkeyup="viewModel.searchadd()" />
+        <input type='submit' class='new' />
+        <a class="" id="buttonsearchaddcancel" href="" onclick="viewModel.showSearchAdd();return false;">cancel</a>
+      </form>
       <table>
         <thead>
         </thead>
@@ -334,7 +339,7 @@ li.tick:before
             <a href="http://twitter.com/#!/guyirvine" class="handle" title="www">@guyirvine</a>
           </td>
           <td>
-            <a href="" onclick="viewModel.displayAddWord();return false;" class="handle extra" id="buttonaddword">add word</a>
+            <a href="" onclick="viewModel.showSearchAdd();return false;" class="handle extra" id="buttonaddword">add word</a>
           </td>
           <td>
             <a href="" onclick="popupmenu();return false;" class='extra' id='displayfootermenu'>...</a>
@@ -380,6 +385,7 @@ li.tick:before
 
     self.taggedViewModel = new TaggedViewModel();
     self.searchBox = new SearchBoxViewModel();
+    self.searchAddBox = new SearchAddBoxViewModel();
     self.shvm = new ShowViewModel();
     self.sevm = new ResultViewModel();
     self.addvm = new AddViewModel();
@@ -387,6 +393,16 @@ li.tick:before
 
     self.search = function() {
       self.searchBox.run();
+    };
+
+    self.showSearchAdd = function() {
+      $( ".formsearchadd" ).toggleClass( "hide" );
+      $( ".formsearchadd input" )[0].value = '';
+      $( ".textsearchadd" )[0].focus();
+    }
+
+    self.searchadd = function() {
+      self.searchAddBox.run();
     };
 
     self.newWord = function() {
@@ -410,6 +426,14 @@ li.tick:before
     self.refreshShow = function() {
       self.shvm.run( self.getShowId() );
     };
+
+    self.addLink = function(id) {
+      var parent_id = self.getShowId();
+      $.post( "/link", JSON.stringify( { 'word_1': parent_id, 'word_2': id }), function(id) {
+        $( '#formsearchadd' ).addClass( 'hide' );
+        self.refreshShow();
+      });
+    }
 
     self.singleLevelCurrent = function() {
       $.post( "/singlelevel/" + self.getShowId(), "", function(id) {
@@ -576,6 +600,50 @@ li.tick:before
 
 
   //*******************************************************
+  function SearchAddBoxViewModel() {
+    var self = this;
+
+    self.criteria = document.getElementById( "textsearchadd" );
+
+    self.running = false;
+
+    self.run = function() {
+      if ( self.running === true ) { return; }
+      self.running = true;
+      self._run();
+      self.running = false;
+    };
+
+    self._run = function() {
+      if ( self.criteria.value === "" ) { $( "#show table tbody" ).html( "" ); return; }
+
+      var criteria = self.criteria.value;
+      $.getJSON( "/search/" + criteria, function( _l ) {
+        if ( criteria !== self.criteria.value ) {
+          self._run();
+        } else {
+          var content = "";
+
+          if ( _l.length === 0 ) {
+            content = "<tr><td>Search returned no results</td></tr>";
+          } else {
+            _.each( _l, function( el ) {
+              content = content + "<tr>" +
+              "<td>" +
+              "<a onclick='viewModel.addLink( " + el.id + " );return false;' href=''>" + el.name + "</a>" +
+              "</td>" +
+              "</tr>";
+            });
+          }
+
+          $( "#show table tbody" ).html( content );
+        }
+      });
+    };
+  }
+
+
+  //*******************************************************
   function SearchBoxViewModel() {
     var self = this;
 
@@ -733,7 +801,8 @@ li.tick:before
     };
 
     self.addWord = function() {
-      var addword = document.getElementById( "wordadd" );
+//      var addword = document.getElementById( "wordadd" );
+      var addword = document.getElementById( "textsearchadd" );
       var word = addword.value.trim();
       if ( word === "" ) {
         return false;
@@ -745,7 +814,7 @@ li.tick:before
           addword.value = "";
         });
       });
-      $( "#formaddword" ).addClass( "hide" );
+      $( "#formsearchadd" ).addClass( "hide" );
     };
 
     self.loadWords = function() {
