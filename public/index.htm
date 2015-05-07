@@ -180,14 +180,18 @@ footer td {
 
 #popdownmenu li {
   list-style-type: none;
-}
-
+}stal
 li.tick:before
  {
     content: '✔';
     margin-left: -1.5em; margin-right: .500em;
  }
 
+#formsearchadd {
+  padding:  12px 9px;
+  border: 1px solid rgb(120, 141, 185);
+  margin-top: 0.3em;
+}
 </style>
 </head>
 <body>
@@ -712,6 +716,8 @@ li.tick:before
 
     self.run = function(id) {
       self.id = id;
+      $( "#show h1" ).html( "" );
+      $( "#show table tbody" ).html( "<tr><td></td></tr>" );
 
       $.getJSON( "/word/" + id, function( el ) {
         console.log( el );
