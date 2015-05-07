@@ -15,10 +15,7 @@
 
   <!-- Bootstrap -->
   <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!--
-  <link href="bower_components/jquery-mobile/css/themes/default/jquery.mobile.css" rel="stylesheet">
--->
-<link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
 
 <title>guyirvine.com</title>
 
@@ -180,7 +177,8 @@ footer td {
 
 #popdownmenu li {
   list-style-type: none;
-}stal
+}
+
 li.tick:before
  {
     content: '✔';
@@ -495,8 +493,9 @@ li.tick:before
         $( "#tagged" ).removeClass( "hide" );
         break;
         case "show":
-        self.shvm.run( state.id );
-        $( "#show" ).removeClass( "hide" );
+        self.displayShow( state.id );
+        //        self.shvm.run( state.id );
+        //$( "#show" ).removeClass( "hide" );
         //        $( "#addnewword" ).removeClass( "hide" );
         break;
         case "add":
@@ -538,7 +537,6 @@ li.tick:before
       $( "#buttonloadwords" ).removeClass( "hide" );
       $( "#displayfootermenu" ).removeClass( "hide" );
       $( "#displayheadermenu" ).removeClass( "hide" );
-
     };
 
     self.displayResult = function() {
