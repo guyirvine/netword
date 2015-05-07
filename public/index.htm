@@ -463,9 +463,11 @@ li.tick:before
       });
     };
     self.delete = function() {
-      $.post( "/delete/" + self.getShowId(), "", function(id) {
-        window.history.back();
-      });
+      if ( confirm("Are you sure you want to Delete this word?") == true ) {
+        $.post( "/delete/" + self.getShowId(), "", function(id) {
+          window.history.back();
+        });
+      };
     };
 
     self.changeWord = function() {
