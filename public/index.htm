@@ -22,6 +22,7 @@
 <style>
 header {
   background-color: rgb(58,87,149);
+  background-color: rgb(3, 151, 214);
   padding: 0.7em;
 }
 header input {
@@ -29,7 +30,11 @@ header input {
   padding-bottom: 0.1em;
   width: 85%;
   border: 1px solid black;
+  /*
   background-color: rgb(120, 141, 185);
+  background-color: rgb(30, 52, 102);
+  */
+  border: none;
   color: white;
 }
 header form a {
@@ -43,6 +48,7 @@ header form a:hover {
 
 footer {
   background-color: rgb(58,87,149);
+  background-color: rgb(3, 151, 214);
   padding: 0.5em;
   position: fixed;
   bottom: 0px;
@@ -162,6 +168,7 @@ footer td {
 
 #popdownmenu {
   background-color: rgb(58,87,149);
+  background-color: rgb(3, 151, 214);
   border: 1px solid white;
   position: fixed;
   width: 40%;
@@ -185,11 +192,29 @@ li.tick:before
     margin-left: -1.5em; margin-right: .500em;
  }
 
+div.table table {
+  width: 100%;
+}
+
+div.table table td a.delete {
+  visibility: hidden;
+}
+
+/*div.table table tr:hover + div.table table tr td {*/
+div.table table tr:hover {
+  background-color: lightgrey;
+}
+
+div.table table tr:hover + a.delete {
+  visibility: visible;
+}
+
 #formsearchadd {
   padding:  12px 9px;
   border: 1px solid rgb(120, 141, 185);
   margin-top: 0.3em;
 }
+
 </style>
 </head>
 <body>
@@ -704,7 +729,8 @@ li.tick:before
       _.each( _l, function( el ) {
         content = content + "<tr>" +
         "<td>" +
-        "<a style='padding-left: " + depth * 2 + "em' onclick='viewModel.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>" +
+        "<a style='padding-left: " + depth * 2 + "em' onclick='viewModel.displayShow( " + el.id + " );return false;' class='delete word-" + el.id + "' href=''>x </a>" +
+        "<a onclick='viewModel.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>" +
         "</td>" +
         "</tr>";
 
