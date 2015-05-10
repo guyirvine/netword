@@ -851,7 +851,8 @@ footer {
           } else {
             _.each( _l, function( el ) {
               content = content + "<tr>" +
-              "<td>" +
+              "<td class='deleteword'>" +
+              "<a onclick='viewModel.deleteLink( " + el.link_id + " );return false;' class='deletewordlink delete word-" + el.id + "' href=''>x </a>" +
               "<a onclick='viewModel.displayShow( " + el.id + " );return false;' class='word-" + el.id + "' href=''>" + el.name + "</a>" +
               "</td>" +
               "</tr>";
