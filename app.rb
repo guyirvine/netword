@@ -27,12 +27,12 @@ class Netword < Sinatra::Application
     end
 
     def get_children(db, id)
-      sql = 'SELECT w1.id ' \
+      sql = 'SELECT w1.id, l1.id AS link_id ' \
             'FROM word_tbl w1 ' \
             '  INNER JOIN link_tbl l1 ON ( w1.id = l1.word_1 ) ' \
             'WHERE l1.word_2 = ? ' \
             'UNION ' \
-            'SELECT w2.id ' \
+            'SELECT w2.id, l2.id AS link_id ' \
             'FROM word_tbl w2 ' \
             '  INNER JOIN link_tbl l2 ON ( w2.id = l2.word_2 ) ' \
             'WHERE l2.word_1 = ? ' \
@@ -64,6 +64,7 @@ class Netword < Sinatra::Application
         next if ids.include?(child_id)
         ids.push child_id
         child, ids = get_descendents(db, depth + 1, child_id, ids)
+        child['link_id'] = row['link_id']
         el['children'].push child
       end
       [el, ids]
@@ -89,6 +90,12 @@ class Netword < Sinatra::Application
     db.execute('DELETE FROM link_tbl WHERE word_2 = ?', [params[:id]])
     db.execute('DELETE FROM accesslog_tbl WHERE word_id = ?', [params[:id]])
     db.execute('DELETE FROM word_tbl WHERE id = ?', [params[:id]])
+    db.close
+  end
+
+  post '/deletelink/:id' do
+    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db.execute('DELETE FROM link_tbl WHERE id = ?', [params[:id]])
     db.close
   end
 
