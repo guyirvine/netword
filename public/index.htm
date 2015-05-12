@@ -162,15 +162,15 @@ footer td {
 
 
 #popdownmenu {
-  background-color: rgb(58,87,149);
-  background-color: rgb(3, 151, 214);
-  border: 1px solid white;
+  background-color: white;
+  border: 1px solid #ccc;
   position: fixed;
   width: 40%;
   right: 0;
   top: 5em;
   padding: 1em;
-  color: white;
+  color: #333;
+
 }
 
 #popdownmenu ul {
@@ -179,6 +179,17 @@ footer td {
 
 #popdownmenu li {
   list-style-type: none;
+  padding: 12px 9px;
+  border-bottom: 1px solid #ccc;
+}
+
+#popdownmenu ul a {
+  color: #333;
+  font-weight: bold;
+}
+#popdownmenu ul a:hover {
+  color: #333;
+  text-decoration: underline;
 }
 
 li.tick:before
@@ -207,15 +218,18 @@ a.deletewordlink {
   position: absolute;
   right: 0;
   width: 5em;
-  display: block;
   background-color: #B00;
   text-align: center;
   top: 0px;
   padding: 12px 9px;
   color: white;
   font-weight: bold;
+  display: none;
 }
 
+div.editshow a.deletewordlink {
+  display: block;
+}
 
 header {
   background-color: rgb(3, 151, 214);
@@ -292,9 +306,6 @@ footer {
     <div id="popdownmenu" class="hide" onblur="$( '#popdownmenu' ).addClass( 'hide' );">
       <ul>
         <li>
-        </li>
-        <li>
-          <a class="extra" id="buttondelete" href="" onclick="viewModel.delete();return false;">delete</a>
         </li>
       </ul>
     </div>
@@ -391,6 +402,10 @@ footer {
         <li class="tagged">
           <a class="extra" id="buttontag" href="" onclick="viewModel.tagCurrent();return false;">Tag</a>
           <a class="extra" id="buttonuntag" href="" onclick="viewModel.unTagCurrent();return false;">Tag</a>
+        </li>
+        <li class="editmode">
+          <a class="" id="buttonentereditmode" href="" onclick="viewModel.enterEditMode();return false;">Edit</a>
+          <a class="hide" id="buttonexiteditmode" href="" onclick="viewModel.exitEditMode();return false;">Edit</a>
         </li>
         <li>
           <a class="" id="buttondelete" href="" onclick="viewModel.delete();return false;">Delete</a>
@@ -529,6 +544,19 @@ footer {
         $( "#buttonuntag" ).addClass( "hide" );
         $( "#buttontag" ).removeClass( "hide" );
       });
+    };
+
+    self.enterEditMode = function() {
+      $( "#popupmenu .editmode" ).addClass( "tick" );
+      $( "#buttonentereditmode" ).addClass( "hide" );
+      $( "#buttonexiteditmode" ).removeClass( "hide" );
+      $( "#show" ).addClass( "editshow" );
+    };
+    self.exitEditMode = function() {
+      $( "#popupmenu .editmode" ).removeClass( "tick" );
+      $( "#buttonentereditmode" ).removeClass( "hide" );
+      $( "#buttonexiteditmode" ).addClass( "hide" );
+      $( "#show" ).removeClass( "editshow" );
     };
 
     self.delete = function() {
