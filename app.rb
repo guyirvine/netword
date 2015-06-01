@@ -77,6 +77,10 @@ class Netword < Sinatra::Application
     end
   end
 
+  get '/' do
+    send_file settings.public_folder + '/index.htm'
+  end
+
   get '/word/:id' do
 #    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
     db = @networddb

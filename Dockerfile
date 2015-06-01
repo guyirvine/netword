@@ -18,7 +18,7 @@ RUN echo "Setup locales" \
   && update-locale LANG=en_NZ.UTF-8
 
 #RUN echo "Create user" \
-#  && mkdir -p /opt/project/ \
+#  && mkdir -p /opt/netword/ \
 #  && groupadd --gid 1000 puser \
 #  && useradd -m --home /home/puser --uid 1000 --gid puser --shell /bin/sh puser
 
@@ -31,11 +31,11 @@ RUN echo "Cleaning up" \
   && apt-get clean -y \
   && rm -rf /var/lib/apt/lists/*
 
-COPY . /opt/project/
+COPY . /opt/netword/
 
 #USER fpuser
 
-WORKDIR /opt/project/
+WORKDIR /opt/netword/
 
 # Leaving in the node / bower commands as they will no doubt prove useful ...
 
