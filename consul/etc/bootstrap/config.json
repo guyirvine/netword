@@ -1,0 +1,12 @@
+{
+    "bootstrap": true,
+    "server": true,
+    "datacenter": "local",
+    "data_dir": "/var/lib/consul",
+    "encrypt": "RG7lON1EPZeXED/q4i4CyA==",
+    "log_level": "INFO",
+    "enable_syslog": true,
+    "ports": {
+      "dns": 53
+    }
+}

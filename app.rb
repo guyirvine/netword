@@ -1,7 +1,6 @@
 require 'sinatra'
 require 'sinatra/cross_origin'
 
-
 require 'FluidDb'
 require 'json'
 
@@ -12,6 +11,13 @@ class Netword < Sinatra::Application
   end
 
   before do
+    faraday = Faraday.new(:url => 'http://consul.service.consul:8500', :proxy => '')
+    kv = Diplomat::Kv.new(faraday)
+    @networddb = FluidDb::Db(kv.get('netword-db'))
+  end
+
+  after do
+    @networddb.close
   end
 
   helpers do
@@ -72,7 +78,8 @@ class Netword < Sinatra::Application
   end
 
   get '/word/:id' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
 
     c = params[:id].to_i
     sql = 'SELECT w.id, w.name, w.url, w.tagged, w.showlevels FROM word_tbl w WHERE w.id = ?'
@@ -85,7 +92,8 @@ class Netword < Sinatra::Application
   end
 
   post '/delete/:id' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
     db.execute('DELETE FROM link_tbl WHERE word_1 = ?', [params[:id]])
     db.execute('DELETE FROM link_tbl WHERE word_2 = ?', [params[:id]])
     db.execute('DELETE FROM accesslog_tbl WHERE word_id = ?', [params[:id]])
@@ -94,37 +102,43 @@ class Netword < Sinatra::Application
   end
 
   post '/deletelink/:id' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
     db.execute('DELETE FROM link_tbl WHERE id = ?', [params[:id]])
     db.close
   end
 
   post '/tag/:id' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
     db.execute('UPDATE word_tbl SET tagged = true WHERE id = ?', [params[:id]])
     db.close
   end
 
   post '/untag/:id' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
     db.execute('UPDATE word_tbl SET tagged = false WHERE id = ?', [params[:id]])
     db.close
   end
 
   post '/singlelevel/:id' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
     db.execute('UPDATE word_tbl SET showlevels = 1 WHERE id = ?', [params[:id]])
     db.close
   end
 
   post '/multilevel/:id' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
     db.execute('UPDATE word_tbl SET showlevels = 2 WHERE id = ?', [params[:id]])
     db.close
   end
 
   post '/word' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
 
     request.body.rewind
     word = request.body.read
@@ -140,7 +154,8 @@ class Netword < Sinatra::Application
   end
 
   post '/link' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
 
     request.body.rewind
     data = JSON.parse request.body.read
@@ -156,7 +171,8 @@ class Netword < Sinatra::Application
   end
 
   get '/search/:criteria' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
 
     c = "%#{params[:criteria]}%".upcase
     sql = 'SELECT id, name, url FROM word_tbl WHERE UPPER(name) LIKE ?'
@@ -169,7 +185,8 @@ class Netword < Sinatra::Application
   end
 
   get '/link/:parentid' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
 
     c = params[:parentid].to_i
     sql = 'SELECT l1.word_1 AS id ' \
@@ -190,7 +207,8 @@ class Netword < Sinatra::Application
   end
 
   get '/children/:parentid' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
 
     c = params[:parentid].to_i
     sql = 'SELECT l1.id As link_id, w1.id, w1.name, w1.url ' \
@@ -213,7 +231,8 @@ class Netword < Sinatra::Application
   end
 
   get '/descendants/:parentid' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
     rst, _ = get_descendents(db, 0, params[:parentid].to_i, [params[:parentid].to_i])
     db.close
 
@@ -221,7 +240,8 @@ class Netword < Sinatra::Application
   end
 
   get '/tagged' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
 
     sql = 'SELECT w.id, w.name, w.url ' \
           'FROM word_tbl w ' \
@@ -242,7 +262,8 @@ class Netword < Sinatra::Application
 
     level_one_id = data['id'].to_i
     level_two_id = nil
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
     data['words'].split("\n").each do |word|
       w = word.strip
       next if w == ''
@@ -267,7 +288,8 @@ class Netword < Sinatra::Application
     request.body.rewind
     data = request.body.read
 
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
     db.execute 'UPDATE word_tbl SET name = ? WHERE id = ? ', [data, params[:id]]
     db.close
   end
@@ -278,13 +300,15 @@ class Netword < Sinatra::Application
 
     p "seturl: #{data}"
 
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
     db.execute 'UPDATE word_tbl SET url = ? WHERE id = ? ', [data, params[:id]]
     db.close
   end
 
   post '/addext' do
-    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+#    db = FluidDb::Db(ENV['DATABASE_URL'].sub('postgres', 'pgsql'))
+    db = @networddb
 
     request.body.rewind
     data = JSON.parse request.body.read

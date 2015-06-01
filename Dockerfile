@@ -46,4 +46,4 @@ RUN bundle install --without test development
 EXPOSE 5001
 
 # ENTRYPOINT ["bundle", "exec", "ruby", "app.rb", "-o", "0.0.0.0", "-p", "5000"]
-ENTRYPOINT ["ruby", "app.rb", "-o", "0.0.0.0", "-p", "5001"]
+ENTRYPOINT ["ruby", "app.rb", "-o", "0.0.0.0", "-p", "5002"]

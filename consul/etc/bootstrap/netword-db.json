@@ -1,0 +1,8 @@
+{
+    "service": {
+        "name": "netword-db",
+        "address": "localhost",
+        "port": 5432,
+        "tags": ["db", "postgres"]
+    }
+}
