@@ -4,7 +4,7 @@ require 'sinatra/cross_origin'
 require 'FluidDb'
 require 'json'
 
-class Netword < Sinatra::Application
+#class Netword < Sinatra::Application
   # To enable cross origin requests for all routes:
   configure do
     enable :cross_origin
@@ -330,4 +330,4 @@ class Netword < Sinatra::Application
 
     200
   end
-end
+#end
