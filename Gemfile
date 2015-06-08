@@ -8,3 +8,5 @@ gem 'json', '~> 1.8'
 gem 'fluiddb', '~> 0.1'
 gem 'pg', '~> 0.18.1'
 gem 'rerun'
+gem 'diplomat'
+

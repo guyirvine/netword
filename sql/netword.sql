@@ -3,6 +3,7 @@
 --
 
 SET statement_timeout = 0;
+SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -38,13 +39,6 @@ CREATE SEQUENCE accesslog_seq
 
 ALTER TABLE public.accesslog_seq OWNER TO girvine;
 
---
--- Name: accesslog_seq; Type: SEQUENCE SET; Schema: public; Owner: girvine
---
-
-SELECT pg_catalog.setval('accesslog_seq', 6999, true);
-
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -78,13 +72,6 @@ CREATE SEQUENCE link_seq
 ALTER TABLE public.link_seq OWNER TO girvine;
 
 --
--- Name: link_seq; Type: SEQUENCE SET; Schema: public; Owner: girvine
---
-
-SELECT pg_catalog.setval('link_seq', 100, true);
-
-
---
 -- Name: link_tbl; Type: TABLE; Schema: public; Owner: girvine; Tablespace: 
 --
 
@@ -113,13 +100,6 @@ CREATE SEQUENCE word_seq
 ALTER TABLE public.word_seq OWNER TO girvine;
 
 --
--- Name: word_seq; Type: SEQUENCE SET; Schema: public; Owner: girvine
---
-
-SELECT pg_catalog.setval('word_seq', 103, true);
-
-
---
 -- Name: word_tbl; Type: TABLE; Schema: public; Owner: girvine; Tablespace: 
 --
 
@@ -135,6 +115,13 @@ CREATE TABLE word_tbl (
 
 
 ALTER TABLE public.word_tbl OWNER TO girvine;
+
+--
+-- Name: accesslog_seq; Type: SEQUENCE SET; Schema: public; Owner: girvine
+--
+
+SELECT pg_catalog.setval('accesslog_seq', 6999, true);
+
 
 --
 -- Data for Name: accesslog_tbl; Type: TABLE DATA; Schema: public; Owner: girvine
@@ -6933,6 +6920,13 @@ COPY accesslog_tbl (id, key, word_id, accessedat) FROM stdin;
 
 
 --
+-- Name: link_seq; Type: SEQUENCE SET; Schema: public; Owner: girvine
+--
+
+SELECT pg_catalog.setval('link_seq', 100, true);
+
+
+--
 -- Data for Name: link_tbl; Type: TABLE DATA; Schema: public; Owner: girvine
 --
 
@@ -7009,6 +7003,13 @@ COPY link_tbl (id, word_1, word_2, createdat) FROM stdin;
 99	101	12	2015-05-16 06:00:23.364919
 100	102	12	2015-05-16 06:00:37.52288
 \.
+
+
+--
+-- Name: word_seq; Type: SEQUENCE SET; Schema: public; Owner: girvine
+--
+
+SELECT pg_catalog.setval('word_seq', 103, true);
 
 
 --
@@ -7145,6 +7146,16 @@ ALTER TABLE ONLY link_tbl
 
 ALTER TABLE ONLY link_tbl
     ADD CONSTRAINT link_word_2_fk FOREIGN KEY (word_2) REFERENCES word_tbl(id);
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
