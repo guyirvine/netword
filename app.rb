@@ -88,8 +88,6 @@ get '/word/:id' do
   arr = db.queryForArray(sql, [c])
   insert_accesslog(db, 'word', c)
 
-  db.close
-
   return arr.to_json
 end
 
@@ -99,37 +97,37 @@ post '/delete/:id' do
   db.execute('DELETE FROM link_tbl WHERE word_2 = ?', [params[:id]])
   db.execute('DELETE FROM accesslog_tbl WHERE word_id = ?', [params[:id]])
   db.execute('DELETE FROM word_tbl WHERE id = ?', [params[:id]])
-  db.close
+
 end
 
 post '/deletelink/:id' do
   db = @networddb
   db.execute('DELETE FROM link_tbl WHERE id = ?', [params[:id]])
-  db.close
+
 end
 
 post '/tag/:id' do
   db = @networddb
   db.execute('UPDATE word_tbl SET tagged = true WHERE id = ?', [params[:id]])
-  db.close
+
 end
 
 post '/untag/:id' do
   db = @networddb
   db.execute('UPDATE word_tbl SET tagged = false WHERE id = ?', [params[:id]])
-  db.close
+
 end
 
 post '/singlelevel/:id' do
   db = @networddb
   db.execute('UPDATE word_tbl SET showlevels = 1 WHERE id = ?', [params[:id]])
-  db.close
+
 end
 
 post '/multilevel/:id' do
   db = @networddb
   db.execute('UPDATE word_tbl SET showlevels = 2 WHERE id = ?', [params[:id]])
-  db.close
+
 end
 
 post '/word' do
@@ -143,7 +141,7 @@ post '/word' do
 
   id = db.queryForValue("SELECT CURRVAL( 'word_seq' )")
 
-  db.close
+
 
   return id
 end
@@ -159,7 +157,7 @@ post '/link' do
 
   id = db.queryForValue("SELECT CURRVAL( 'link_seq' )")
 
-  db.close
+
 
   return id
 end
@@ -172,7 +170,7 @@ get '/search/:criteria' do
   rst = db.queryForResultset(sql, [c])
   insert_accesslog_rst(db, 'search', rst)
 
-  db.close
+
 
   return rst.to_json
 end
@@ -193,7 +191,7 @@ get '/link/:parentid' do
   rst = db.queryForResultset(sql, [c, c])
   insert_accesslog_rst(db, 'link', rst)
 
-  db.close
+
 
   return rst.to_json
 end
@@ -216,7 +214,7 @@ get '/children/:parentid' do
   rst = db.queryForResultset(sql, [c, c])
   insert_accesslog_rst(db, 'children', rst)
 
-  db.close
+
 
   return rst.to_json
 end
@@ -224,7 +222,7 @@ end
 get '/descendants/:parentid' do
   db = @networddb
   rst, _ = get_descendents(db, 0, params[:parentid].to_i, [params[:parentid].to_i])
-  db.close
+
 
   return rst.to_json
 end
@@ -240,7 +238,7 @@ get '/tagged' do
   rst = db.queryForResultset(sql)
   insert_accesslog_rst(db, 'tagged', rst)
 
-  db.close
+
 
   return rst.to_json
 end
@@ -278,7 +276,7 @@ post '/updateword/:id' do
 
   db = @networddb
   db.execute 'UPDATE word_tbl SET name = ? WHERE id = ? ', [data, params[:id]]
-  db.close
+
 end
 
 post '/seturl/:id' do
@@ -289,7 +287,7 @@ post '/seturl/:id' do
 
   db = @networddb
   db.execute 'UPDATE word_tbl SET url = ? WHERE id = ? ', [data, params[:id]]
-  db.close
+
 end
 
 post '/addext' do
@@ -301,7 +299,7 @@ post '/addext' do
   sql = 'INSERT INTO word_tbl( name, url, tagged ) VALUES ( ?, ?, true )'
   db.execute(sql, [data['word'], data['url']])
 
-  db.close
+
 end
 
 options '/addext' do
